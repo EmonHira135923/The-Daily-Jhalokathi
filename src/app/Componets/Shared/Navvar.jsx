@@ -8,14 +8,12 @@ const Navvar = () => {
   const [currentDate, setCurrentDate] = useState("");
   const [showFirstText, setShowFirstText] = useState(true);
 
-  // 🌤 Weather states
   const [weather, setWeather] = useState({
     temp: null,
     loading: true,
     error: false,
   });
 
-  // ১. টেক্সট এনিমেশন (৩ সেকেন্ড পর পর)
   useEffect(() => {
     const interval = setInterval(() => {
       setShowFirstText((prev) => !prev);
@@ -23,34 +21,21 @@ const Navvar = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // ২. বাংলা তারিখ সেট করা
   useEffect(() => {
-    const options = {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
+    const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
     setCurrentDate(new Date().toLocaleDateString("bn-BD", options));
   }, []);
 
-  // ৩. আবহাওয়া তথ্য সংগ্রহ
   useEffect(() => {
     const API_KEY = process.env.NEXT_PUBLIC_WEATHER_KEY;
     const fetchWeather = async () => {
       try {
-        // সরাসরি ঝালকাঠির জন্য কল
         const res = await fetch(
-          `https://api.openweathermap.org/data/2.5/weather?q=Jhalokati&units=metric&appid=${API_KEY}`,
+          `https://api.openweathermap.org/data/2.5/weather?q=Jhalokati&units=metric&appid=${API_KEY}`
         );
         const data = await res.json();
-
         if (res.ok && data.main) {
-          setWeather({
-            temp: Math.round(data.main.temp),
-            loading: false,
-            error: false,
-          });
+          setWeather({ temp: Math.round(data.main.temp), loading: false, error: false });
         } else {
           throw new Error("Failed");
         }
@@ -58,7 +43,7 @@ const Navvar = () => {
         setWeather((prev) => ({ ...prev, loading: false, error: true }));
       }
     };
-    fetchWeather();
+    if (API_KEY) fetchWeather();
   }, []);
 
   const categories = [
@@ -77,11 +62,12 @@ const Navvar = () => {
 
   return (
     <header className="w-full bg-white font-banglafont border-b border-gray-200 shadow-sm">
-      <div className="container mx-auto px-4 py-5 flex flex-col md:flex-row justify-between items-center gap-6">
+      <div className="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+
         {/* Logo Section */}
         <div className="text-left shrink-0">
           <Link href="/">
-            <h1 className="text-4xl md:text-5xl font-bold text-red-600 hover:opacity-90 transition-opacity tracking-tight">
+            <h1 className="text-4xl md:text-5xl font-bold text-red-600 tracking-tight">
               দৈনিক ঝালকাঠি
             </h1>
           </Link>
@@ -91,88 +77,98 @@ const Navvar = () => {
         </div>
 
         {/* Animated News/Contact Center */}
-        {/* Animated News/Contact Center */}
         <div className="flex-1 flex justify-center h-10 items-center relative overflow-hidden">
           <div
             className={`absolute transition-all duration-700 ease-in-out transform ${
-              showFirstText
-                ? "translate-y-0 opacity-100"
-                : "translate-y-10 opacity-0"
+              showFirstText ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
             }`}
           >
             <Link
               href="/contact"
-              className="text-xl md:text-2xl font-black text-red-600 hover:text-red-700 transition-all inline-block animate-bounce"
+              className="text-xl md:text-2xl font-black text-red-600 animate-bounce"
             >
               যোগাযোগ করুন
             </Link>
           </div>
-
           <div
             className={`absolute transition-all duration-700 ease-in-out transform ${
-              !showFirstText
-                ? "translate-y-0 opacity-100"
-                : "-translate-y-10 opacity-0"
+              !showFirstText ? "translate-y-0 opacity-100" : "-translate-y-10 opacity-0"
             }`}
           >
             <Link
               href="/contact"
-              className="text-xl md:text-2xl font-black text-red-600 hover:text-red-700 transition-all inline-block animate-bounce"
+              className="text-xl md:text-2xl font-black text-red-600 animate-bounce"
             >
               বিজ্ঞাপন দিতে যোগাযোগ করুন
             </Link>
           </div>
         </div>
 
-        {/* Date & Dynamic Weather Section */}
-        {/* Date & Dynamic Weather Section */}
-        <div className="text-right text-[11px] md:text-[12px] text-gray-500 border-l border-gray-200 pl-4 hidden md:block">
-          {/* তারিখ */}
-          <p className="font-normal text-gray-400 mb-0.5">{currentDate}</p>
+        {/* Right Section: Date + Weather + Login — all perfectly aligned */}
+        <div className="hidden md:flex items-center gap-3 border-l border-gray-200 pl-5 shrink-0">
 
-          {/* ওয়েদার */}
-          <div className="flex justify-end items-center gap-1.5">
+          {/* Date */}
+          <p className="text-[12px] text-gray-400 leading-tight">{currentDate}</p>
+
+          {/* Divider */}
+          <div className="w-px h-8 bg-gray-200"></div>
+
+          {/* Weather */}
+          <div className="flex items-center gap-1 text-[12px] text-gray-500">
             {weather.loading ? (
-              <span className="loading loading-spinner w-3 h-3 text-gray-300"></span>
-            ) : weather.error ? (
-              <span className="text-gray-400">Jhalokathi</span>
+              <span className="loading loading-spinner w-3 h-3"></span>
             ) : (
-              <div className="flex items-center gap-1 text-gray-400 italic">
-                <span className="text-yellow-500/80 text-sm">☀️</span>
-                <span className="font-roboto tracking-tight">
-                  {weather.temp}°C,
-                </span>
-                <span>Jhalokathi</span>
-              </div>
+              <>
+                <span>☀️</span>
+                <span>{weather.temp}°C</span>
+              </>
             )}
           </div>
+
+          {/* Divider */}
+          <div className="w-px h-8 bg-gray-200"></div>
+
+          {/* Login Button */}
+          <Link
+            href="/login"
+            className="inline-flex items-center gap-1.5 text-[13px] font-medium px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors whitespace-nowrap"
+          >
+            <svg
+              className="w-3.5 h-3.5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+            লগইন
+          </Link>
+
         </div>
       </div>
 
-      {/* Categories Navigation */}
+      {/* Navigation */}
       <nav className="bg-gray-50 border-t border-gray-200">
         <div className="container mx-auto px-4 overflow-x-auto no-scrollbar">
           <ul className="flex items-center justify-start whitespace-nowrap min-h-[45px] gap-2">
-            {categories.map((cat) => {
-              const active = pathname === `/category/${cat.slug}`;
-              return (
-                <li key={cat.slug} className="relative">
-                  <Link
-                    href={`/category/${cat.slug}`}
-                    className={`px-4 py-3 text-[15px] font-semibold inline-block transition-all duration-200 ${
-                      active
-                        ? "text-red-600"
-                        : "text-gray-600 hover:text-red-600"
-                    }`}
-                  >
-                    {cat.name}
-                  </Link>
-                  {active && (
-                    <div className="absolute bottom-0 left-0 w-full h-[3px] bg-red-600 rounded-t-sm" />
-                  )}
-                </li>
-              );
-            })}
+            {categories.map((cat) => (
+              <li key={cat.slug}>
+                <Link
+                  href={`/category/${cat.slug}`}
+                  className={`px-4 py-3 text-[15px] font-semibold inline-block ${
+                    pathname === `/category/${cat.slug}`
+                      ? "text-red-600 border-b-2 border-red-600"
+                      : "text-gray-600 hover:text-red-600"
+                  }`}
+                >
+                  {cat.name}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
       </nav>
