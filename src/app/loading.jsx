@@ -10,7 +10,7 @@ const Loading = () => {
                 {/* Logo with Pulse Animation */}
                 <div className="relative w-32 h-32 md:w-40 md:h-40 mb-6 animate-pulse">
                     <Image 
-                        src="/logo.png" // আপনার public ফোল্ডারে লোগোটির নাম logo.png রেখে এখানে পাথ দিন
+                        src="/logo.png"
                         alt="The Daily Jhalokathi Logo"
                         fill
                         className="object-contain"
