@@ -1,3 +1,4 @@
+import CategoryPage from "@/app/Componets/AllPages/CategoryPage";
 import React from "react";
 
 export const metadata = {
@@ -54,11 +55,7 @@ export const metadata = {
 };
 
 const BusinessPage = () => {
-  return (
-    <div>
-      <h1>বাণিজ্য | Business Page</h1>
-    </div>
-  );
+  return <CategoryPage slug="business" />;
 };
 
 export default BusinessPage;

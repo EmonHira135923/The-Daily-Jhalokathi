@@ -1,3 +1,4 @@
+import CategoryPage from "@/app/Componets/AllPages/CategoryPage";
 import React from "react";
 
 export const metadata = {
@@ -53,12 +54,8 @@ export const metadata = {
   },
 };
 
-const Crimepage = () => {
-  return (
-    <div>
-      <h1>অপরাধ | Crime Page</h1>
-    </div>
-  );
+const CrimePage = () => {
+  return <CategoryPage slug="crime" />;
 };
 
-export default Crimepage;
+export default CrimePage;

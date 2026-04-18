@@ -1,3 +1,4 @@
+import CategoryPage from "@/app/Componets/AllPages/CategoryPage";
 import React from "react";
 
 export const metadata = {
@@ -53,12 +54,9 @@ export const metadata = {
   },
 };
 
+
 const NationalPage = () => {
-  return (
-    <div>
-      <h1>জাতীয় | National Page</h1>
-    </div>
-  );
+  return <CategoryPage slug="national" />;
 };
 
 export default NationalPage;

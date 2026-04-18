@@ -1,3 +1,4 @@
+import CategoryPage from "@/app/Componets/AllPages/CategoryPage";
 import React from "react";
 
 export const metadata = {
@@ -53,12 +54,8 @@ export const metadata = {
   },
 };
 
-const Opinion = () => {
-  return (
-    <div>
-      <h1>মতামত | Opinion Page</h1>
-    </div>
-  );
+const OpinionPage = () => {
+  return <CategoryPage slug="opinion" />;
 };
 
-export default Opinion;
+export default OpinionPage;

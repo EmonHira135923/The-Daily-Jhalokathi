@@ -1,3 +1,4 @@
+import CategoryPage from "@/app/Componets/AllPages/CategoryPage";
 import React from "react";
 
 export const metadata = {
@@ -53,12 +54,8 @@ export const metadata = {
   },
 };
 
-const Politicspage = () => {
-  return (
-    <div>
-      <h1>রাজনীতি | Politics Page</h1>
-    </div>
-  );
+const PoliticsPage = () => {
+  return <CategoryPage slug="politics" />;
 };
 
-export default Politicspage;
+export default PoliticsPage;

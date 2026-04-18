@@ -1,3 +1,4 @@
+import CategoryPage from "@/app/Componets/AllPages/CategoryPage";
 import React from "react";
 
 export const metadata = {
@@ -53,12 +54,8 @@ export const metadata = {
   },
 };
 
-const Economicspage = () => {
-  return (
-    <div>
-      <h1>অর্থনীতি | Economics Page</h1>
-    </div>
-  );
+const EconomicsPage = () => {
+  return <CategoryPage slug="economics" />;
 };
 
-export default Economicspage;
+export default EconomicsPage;

@@ -1,3 +1,4 @@
+import CategoryPage from "@/app/Componets/AllPages/CategoryPage";
 import React from "react";
 
 export const metadata = {
@@ -54,12 +55,8 @@ export const metadata = {
   },
 };
 
-const Educationpage = () => {
-  return (
-    <div>
-      <h1>শিক্ষা | Education Page</h1>
-    </div>
-  );
+const EducationPage = () => {
+  return <CategoryPage slug="education" />;
 };
 
-export default Educationpage;
+export default EducationPage;
