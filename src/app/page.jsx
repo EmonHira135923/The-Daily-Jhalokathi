@@ -1,9 +1,10 @@
 import React from 'react';
+import HomeNewsGrid from './Componets/AllPages/HomeNewsGrid';
 
 const Home = () => {
   return (
     <div>
-      <h1>Home</h1>
+      <HomeNewsGrid/>
     </div>
   );
 };
