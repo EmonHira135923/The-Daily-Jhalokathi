@@ -1,12 +1,15 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const Navvar = () => {
   const pathname = usePathname();
-  const [currentDate, setCurrentDate] = useState("");
   const [showFirstText, setShowFirstText] = useState(true);
+  const currentDate = useMemo(() => {
+    const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
+    return new Date().toLocaleDateString("bn-BD", options);
+  }, []);
 
   const [weather, setWeather] = useState({
     temp: null,
@@ -19,11 +22,6 @@ const Navvar = () => {
       setShowFirstText((prev) => !prev);
     }, 3000);
     return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
-    setCurrentDate(new Date().toLocaleDateString("bn-BD", options));
   }, []);
 
   useEffect(() => {

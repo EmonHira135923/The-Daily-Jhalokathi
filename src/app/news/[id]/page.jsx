@@ -2,11 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FaCalendarAlt, FaUserEdit } from "react-icons/fa";
-import { getCategoryName, getNewsById, getNewsBySlug } from "@/lib/newsData";
+import { getCategoryName, getNewsById, getNewsBySlug } from "@/(Backend)/lib/newsData";
 import ShareButtons from "@/app/Componets/Shared/ShareButtons";
 
 export async function generateStaticParams() {
-  const { newsItems } = await import("@/lib/newsData");
+  const { newsItems } = await import("@/(Backend)/lib/newsData");
   return newsItems.map((item) => ({ id: item.id.toString() }));
 }
 
@@ -47,7 +47,9 @@ const NewsDetails = async ({ params }) => {
     notFound();
   }
 
-  const relatedNews = getNewsBySlug(news.slug).filter((item) => item.id !== news.id).slice(0, 4);
+  const relatedNews = getNewsBySlug(news.slug)
+    .filter((item) => item.id !== news.id)
+    .slice(0, 4);
 
   return (
     <div className="bg-base-100 min-h-screen font-banglafont pb-20">
@@ -79,7 +81,7 @@ const NewsDetails = async ({ params }) => {
                 </div>
               </div>
 
-              <div className="relative overflow-hidden rounded-[1.5rem] border border-base-200 shadow-lg">
+              <div className="relative overflow-hidden rounded-3xl border border-base-200 shadow-lg">
                 <Image
                   height={675}
                   width={1200}
@@ -97,18 +99,26 @@ const NewsDetails = async ({ params }) => {
 
               {news.quote && (
                 <div className="mt-10 rounded-3xl border border-primary/20 bg-primary/5 p-6 shadow-sm">
-                  <p className="text-lg font-semibold text-primary">“{news.quote.text}”</p>
-                  <p className="mt-3 text-sm text-slate-600">— {news.quote.author}</p>
+                  <p className="text-lg font-semibold text-primary">
+                    “{news.quote.text}”
+                  </p>
+                  <p className="mt-3 text-sm text-slate-600">
+                    — {news.quote.author}
+                  </p>
                 </div>
               )}
 
               <section className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
                 <h2 className="text-2xl font-bold mb-4">মন্তব্য করুন</h2>
-                <p className="text-sm text-gray-600 mb-6">আপনার মন্তব্য এখানে লিখে আমাদের সংবাদ নিয়ে আলোচনা করুন।</p>
+                <p className="text-sm text-gray-600 mb-6">
+                  আপনার মন্তব্য এখানে লিখে আমাদের সংবাদ নিয়ে আলোচনা করুন।
+                </p>
                 <form className="space-y-4">
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <label className="block">
-                      <span className="text-sm font-medium text-gray-700">নাম *</span>
+                      <span className="text-sm font-medium text-gray-700">
+                        নাম *
+                      </span>
                       <input
                         type="text"
                         placeholder="আপনার নাম"
@@ -116,7 +126,9 @@ const NewsDetails = async ({ params }) => {
                       />
                     </label>
                     <label className="block">
-                      <span className="text-sm font-medium text-gray-700">ইমেইল *</span>
+                      <span className="text-sm font-medium text-gray-700">
+                        ইমেইল *
+                      </span>
                       <input
                         type="email"
                         placeholder="your@email.com"
@@ -125,7 +137,9 @@ const NewsDetails = async ({ params }) => {
                     </label>
                   </div>
                   <label className="block">
-                    <span className="text-sm font-medium text-gray-700">মন্তব্য *</span>
+                    <span className="text-sm font-medium text-gray-700">
+                      মন্তব্য *
+                    </span>
                     <textarea
                       rows="5"
                       placeholder="আপনার মন্তব্য লিখুন..."
@@ -141,30 +155,57 @@ const NewsDetails = async ({ params }) => {
                 </form>
               </section>
             </article>
-
+            {/* সম্পর্কিত সংবাদ (Related News) Aside Section */}
             <aside className="space-y-8">
               <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-                <h2 className="text-xl font-bold mb-4">সম্পর্কিত সংবাদ</h2>
-                <div className="space-y-4">
+                <h2 className="text-xl font-bold mb-6 border-l-4 border-primary pl-3">
+                  সম্পর্কিত সংবাদ
+                </h2>
+                <div className="space-y-5">
                   {relatedNews.map((item) => (
                     <Link
                       key={item.id}
                       href={`/news/${item.id}`}
-                      className="block rounded-3xl border border-base-200 bg-slate-50 p-4 transition hover:border-primary hover:bg-white"
+                      className="group flex gap-4 items-start rounded-2xl transition hover:bg-slate-50 p-2"
                     >
-                      <p className="text-sm font-semibold text-slate-900">{item.title}</p>
-                      <p className="text-xs text-slate-500 mt-2">{item.date}</p>
+                      {/* Image Container */}
+                      <div className="relative h-20 w-24 shrink-0 overflow-hidden rounded-xl border border-base-200">
+                        <Image
+                          src={item.image}
+                          alt={item.title}
+                          fill
+                          className="object-cover transition duration-300 group-hover:scale-110"
+                        />
+                      </div>
+
+                      {/* Content Container */}
+                      <div className="flex flex-col justify-between">
+                        <p className="text-sm font-bold text-slate-900 line-clamp-2 group-hover:text-primary transition-colors leading-snug">
+                          {item.title}
+                        </p>
+                        <p className="text-[11px] text-slate-500 mt-2 flex items-center gap-1">
+                          <FaCalendarAlt className="text-primary/70" />
+                          {item.date}
+                        </p>
+                      </div>
                     </Link>
                   ))}
                 </div>
               </div>
 
+              {/* Tags Section */}
               <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
                 <h2 className="text-xl font-bold mb-4">ট্যাগ</h2>
                 <div className="flex flex-wrap gap-2">
-                  <span className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm">{getCategoryName(news.slug)}</span>
-                  <span className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm">বাংলা</span>
-                  <span className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm">নিউজ</span>
+                  <span className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm hover:bg-primary hover:text-white transition cursor-pointer">
+                    {getCategoryName(news.slug)}
+                  </span>
+                  <span className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm hover:bg-primary hover:text-white transition cursor-pointer">
+                    বাংলা
+                  </span>
+                  <span className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm hover:bg-primary hover:text-white transition cursor-pointer">
+                    নিউজ
+                  </span>
                 </div>
               </div>
             </aside>

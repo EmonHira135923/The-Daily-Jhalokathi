@@ -8,7 +8,9 @@ const NewsDetailActions = ({ title }) => {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setUrl(window.location.href);
+      window.requestAnimationFrame(() => {
+        setUrl(window.location.href);
+      });
     }
   }, []);
 

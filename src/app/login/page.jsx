@@ -1,4 +1,5 @@
 import React from "react";
+import AuthPage from "../Componets/AllPages/AuthPage";
 
 export const metadata = {
   title: "লগইন | Login | The Daily News",
@@ -55,7 +56,7 @@ export const metadata = {
 const Loginpage = () => {
   return (
     <div>
-      <h1>লগইন পেজ | Login Page</h1>
+      <AuthPage/>
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { getCategoryName, getNewsBySlug } from "@/lib/newsData";
+import { getCategoryName, getNewsBySlug } from "@/(Backend)/lib/newsData";
 
 const CategoryPage = ({ slug }) => {
   const categoryName = getCategoryName(slug);

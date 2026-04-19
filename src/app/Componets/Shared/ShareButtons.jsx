@@ -1,6 +1,7 @@
 'use client';
 
 import { FaFacebook, FaLink, FaPrint, FaWhatsapp, FaYoutube } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 const ShareButtons = () => {
   const url = typeof window !== 'undefined' ? window.location.href : '';
@@ -22,10 +23,10 @@ const ShareButtons = () => {
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(url);
-      alert('Link copied to clipboard!');
+      toast.success('Link copied to clipboard!');
     } catch (err) {
       console.error('Failed to copy: ', err);
-      alert('Could not copy the link. Please try again.');
+      toast.error('Could not copy the link. Please try again.');
     }
   };
 

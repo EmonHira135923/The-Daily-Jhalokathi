@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { categories, getCategoryName, newsItems } from "@/lib/newsData";
+import { categories, getCategoryName, newsItems } from "@/(Backend)/lib/newsData";
 
 // ─── Category color map ───────────────────────────────────────────────────────
 const categoryColors = {

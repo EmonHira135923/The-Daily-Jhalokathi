@@ -2,6 +2,7 @@ import { Hind_Siliguri, Roboto } from "next/font/google";
 import "./globals.css";
 import Navvar from "./Componets/Shared/Navvar";
 import Footer from "./Componets/Shared/Footer";
+import { ToastContainer } from "react-toastify";
 
 // Font
 const roboto = Roboto({
@@ -134,6 +135,7 @@ export default function RootLayout({ children }) {
       className={`${banglafont.variable} ${roboto.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <ToastContainer/>
         <Navvar />
         {children}
         <Footer />

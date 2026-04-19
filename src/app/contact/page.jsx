@@ -1,4 +1,5 @@
 import React from "react";
+import ContactPage from "../Componets/AllPages/ContactPage";
 
 export const metadata = {
   title: "যোগাযোগ | Contact | The Daily News",
@@ -56,7 +57,7 @@ export const metadata = {
 const Contactpage = () => {
   return (
     <div>
-      <h1>যোগাযোগ পেজ | Contact Page</h1>
+      <ContactPage/>
     </div>
   );
 };
