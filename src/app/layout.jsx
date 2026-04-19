@@ -1,8 +1,8 @@
 import { Hind_Siliguri, Roboto } from "next/font/google";
 import "./globals.css";
-import Navvar from "./Componets/Shared/Navvar";
-import Footer from "./Componets/Shared/Footer";
 import { ToastContainer } from "react-toastify";
+import Navvar from "./(Fronted)/Componets/Shared/Navvar";
+import Footer from "./(Fronted)/Componets/Shared/Footer";
 
 // Font
 const roboto = Roboto({

@@ -1,5 +1,5 @@
 import React from "react";
-import HomeNewsGrid from "./Componets/AllPages/HomeNewsGrid";
+import HomeNewsGrid from "./(Fronted)/Componets/AllPages/HomeNewsGrid";
 
 export const metadata = {
   title: "দ্য ডেইলি নিউজ | The Daily News - সর্বশেষ সংবাদ",
