@@ -48,3 +48,16 @@ export const getBreakingNews = async () => {
   return database.collection("breakingnews");
 };
 
+// Comments Collection
+export const getComments = async () => {
+  const database = await connectDB();
+  return database.collection("comments");
+};
+
+// Replay Collection
+
+export const getReplies = async () => {
+  const database = await connectDB();
+  return database.collection("replies");
+};
+

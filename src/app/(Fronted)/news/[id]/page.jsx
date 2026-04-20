@@ -6,6 +6,7 @@ import { ObjectId } from "mongodb";
 import { getCategoryName } from "@/app/(Backend)/lib/newsData";
 import { getNews } from "@/app/(Backend)/lib/dbConnect";
 import ShareButtons from "../../Componets/Shared/ShareButtons";
+import NewsDetailsCommentForm from "../../Componets/Forms/NewsDetailsCommentForm";
 
 export async function generateStaticParams() {
   try {
@@ -166,46 +167,7 @@ const NewsDetails = async ({ params }) => {
                 <p className="text-sm text-gray-600 mb-6">
                   আপনার মন্তব্য এখানে লিখে আমাদের সংবাদ নিয়ে আলোচনা করুন।
                 </p>
-                <form className="space-y-4">
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <label className="block">
-                      <span className="text-sm font-medium text-gray-700">
-                        নাম *
-                      </span>
-                      <input
-                        type="text"
-                        placeholder="আপনার নাম"
-                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-gray-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10"
-                      />
-                    </label>
-                    <label className="block">
-                      <span className="text-sm font-medium text-gray-700">
-                        ইমেইল *
-                      </span>
-                      <input
-                        type="email"
-                        placeholder="your@email.com"
-                        className="mt-2 w-full rounded-2xl border border-gray-300 bg-gray-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10"
-                      />
-                    </label>
-                  </div>
-                  <label className="block">
-                    <span className="text-sm font-medium text-gray-700">
-                      মন্তব্য *
-                    </span>
-                    <textarea
-                      rows="5"
-                      placeholder="আপনার মন্তব্য লিখুন..."
-                      className="mt-2 w-full rounded-3xl border border-gray-300 bg-gray-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10"
-                    />
-                  </label>
-                  <button
-                    type="button"
-                    className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:bg-primary-dark"
-                  >
-                    মন্তব্য পাঠান
-                  </button>
-                </form>
+                <NewsDetailsCommentForm newsId={id} />
               </section>
             </article>
             {/* সম্পর্কিত সংবাদ (Related News) Aside Section */}
