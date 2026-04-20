@@ -1,5 +1,6 @@
 import React from "react";
 import { Mail, MapPin, Globe, Phone } from "lucide-react";
+import { FaFacebook, FaYoutube } from "react-icons/fa";
 import ContactForm from "../Forms/ContactForm";
 import config from "../../data/config.json";
 
@@ -85,18 +86,24 @@ const ContactPage = () => {
                 <h3 className="font-semibold text-gray-900 mb-2">
                   সোশ্যাল মিডিয়া
                 </h3>
-                <div className="flex space-x-3">
+                <div className="flex items-center gap-3">
                   <a
                     href={config.social_links.facebook}
-                    className="text-blue-600 hover:text-blue-700 font-medium transition-colors"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition"
+                    aria-label="Facebook"
                   >
-                    Facebook
+                    <FaFacebook className="h-5 w-5" />
                   </a>
                   <a
-                    href={config.social_links.twitter}
-                    className="text-red-600 hover:text-red-700 font-medium transition-colors"
+                    href={config.social_links.youtube}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition"
+                    aria-label="YouTube"
                   >
-                    Twitter
+                    <FaYoutube className="h-5 w-5" />
                   </a>
                 </div>
               </div>

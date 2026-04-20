@@ -29,12 +29,17 @@ export const connectDB = async () => {
   }
 };
 
+// User Collection
+export const getUsers = async () => {
+  const database = await connectDB();
+  return database.collection("users");
+};
+
 // News Collection
 export const getNews = async () => {
   const database = await connectDB();
   return database.collection("news");
 };
-
 
 // Contact Form Collection
 export const getContactform = async () => {
@@ -55,9 +60,7 @@ export const getComments = async () => {
 };
 
 // Replay Collection
-
 export const getReplies = async () => {
   const database = await connectDB();
   return database.collection("replies");
 };
-
