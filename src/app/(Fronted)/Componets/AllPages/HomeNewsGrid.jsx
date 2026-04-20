@@ -241,6 +241,7 @@ const HomeNewsGrid = () => {
               src={featuredItem.image}
               alt={featuredItem.title}
               fill
+              sizes="(max-width: 1024px) 100vw, 60vw"
               className="object-cover transition-transform duration-500 group-hover:scale-105"
               priority
             />
@@ -279,6 +280,7 @@ const HomeNewsGrid = () => {
                     src={news.image}
                     alt={news.title}
                     fill
+                    sizes="112px"
                     className="object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                 </div>
@@ -349,6 +351,7 @@ const HomeNewsGrid = () => {
                   src={item.image}
                   alt={item.title}
                   fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute top-3 left-3">

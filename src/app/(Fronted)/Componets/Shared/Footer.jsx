@@ -1,7 +1,8 @@
 "use client";
 import React from 'react';
 import Link from 'next/link';
-import { FaFacebook, FaYoutube, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaFacebook, FaYoutube, FaEnvelope, FaMapMarkerAlt, FaPhone } from 'react-icons/fa';
+import config from '../../data/config.json';
 
 const Footer = () => {
   // ১. ডায়নামিক বছর বের করা
@@ -36,17 +37,17 @@ const Footer = () => {
           <div className="space-y-4">
             <Link href="/">
               <h2 className="text-3xl font-bold text-white mb-2">
-                দৈনিক ঝালকাঠি
+                {config.site_name_bangla}
               </h2>
             </Link>
             <p className="text-sm text-gray-400 leading-relaxed">
-              সত্যের সন্ধানে, সবার জন্য। বস্তুনিষ্ঠ সংবাদ পরিবেশনাই আমাদের মূল লক্ষ্য।
+              {config.site_description}
             </p>
             <div className="flex gap-4 pt-2">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors bg-gray-800 p-2 rounded-full">
+              <a href={config.social_links.facebook} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors bg-gray-800 p-2 rounded-full">
                 <FaFacebook size={20} />
               </a>
-              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors bg-gray-800 p-2 rounded-full">
+              <a href={config.social_links.twitter} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors bg-gray-800 p-2 rounded-full">
                 <FaYoutube size={20} />
               </a>
             </div>
@@ -92,13 +93,19 @@ const Footer = () => {
             <ul className="space-y-4 text-sm font-roboto">
               <li className="flex items-center gap-3">
                 <FaEnvelope className="text-primary" />
-                <a href="mailto:contact@dailyjhalokathi.com" className="hover:underline">
-                  contact@dailyjhalokathi.com
+                <a href={`mailto:${config.email}`} className="hover:underline">
+                  {config.email}
+                </a>
+              </li>
+              <li className="flex items-center gap-3">
+                <FaPhone className="text-primary" />
+                <a href={`tel:${config.phone}`} className="hover:underline">
+                  {config.phone}
                 </a>
               </li>
               <li className="flex items-start gap-3">
                 <FaMapMarkerAlt className="text-primary mt-1" />
-                <span className="font-banglafont">ঝালকাঠি সদর, ঝালকাঠি</span>
+                <span className="font-banglafont">{config.address}</span>
               </li>
             </ul>
           </div>

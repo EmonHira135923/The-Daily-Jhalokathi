@@ -1,6 +1,7 @@
 "use client"
 import Image from 'next/image';
 import React from 'react';
+import config from './(Fronted)/data/config.json';
 
 const Loading = () => {
     return (
@@ -11,8 +12,9 @@ const Loading = () => {
                 <div className="relative w-32 h-32 md:w-40 md:h-40 mb-6 animate-pulse">
                     <Image 
                         src="/logo.png"
-                        alt="The Daily Jhalokathi Logo"
+                        alt={`${config.site_name_english} Logo`}
                         fill
+                        sizes="(max-width: 768px) 128px, 160px"
                         className="object-contain"
                     />
                 </div>
@@ -36,7 +38,7 @@ const Loading = () => {
             {/* Bottom Footer Text */}
             <div className="absolute bottom-10">
                 <p className="text-[10px] uppercase tracking-[0.4em] text-gray-400 font-roboto">
-                    The Daily Jhalokathi
+                    {config.site_name_english}
                 </p>
             </div>
 

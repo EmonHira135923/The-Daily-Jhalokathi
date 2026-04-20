@@ -227,6 +227,7 @@ const NewsDetails = async ({ params }) => {
                           src={item.image}
                           alt={item.title}
                           fill
+                          sizes="96px"
                           className="object-cover transition duration-300 group-hover:scale-110"
                         />
                       </div>

@@ -1,6 +1,7 @@
 import React from "react";
-import { Mail, MapPin, Globe } from "lucide-react";
+import { Mail, MapPin, Globe, Phone } from "lucide-react";
 import ContactForm from "../Forms/ContactForm";
+import config from "../../data/config.json";
 
 const ContactPage = () => {
   return (
@@ -32,10 +33,28 @@ const ContactPage = () => {
               <div>
                 <h3 className="font-semibold text-gray-900 mb-1">ইমেইল</h3>
                 <a
-                  href="mailto:contact@dailyjhalokathi.com"
+                  href={`mailto:${config.email}`}
                   className="text-red-600 hover:text-red-700 transition-colors"
                 >
-                  contact@dailyjhalokathi.com
+                  {config.email}
+                </a>
+              </div>
+            </div>
+
+            {/* Phone */}
+            <div className="flex items-start space-x-4 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                  <Phone className="w-6 h-6 text-red-600" />
+                </div>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-1">ফোন</h3>
+                <a
+                  href={`tel:${config.phone}`}
+                  className="text-red-600 hover:text-red-700 transition-colors"
+                >
+                  {config.phone}
                 </a>
               </div>
             </div>
@@ -50,7 +69,7 @@ const ContactPage = () => {
               <div>
                 <h3 className="font-semibold text-gray-900 mb-1">ঠিকানা</h3>
                 <p className="text-gray-600">
-                  Jhalokathi Sadar, Jhalokathi
+                  {config.address}
                 </p>
               </div>
             </div>
@@ -68,16 +87,16 @@ const ContactPage = () => {
                 </h3>
                 <div className="flex space-x-3">
                   <a
-                    href="#"
+                    href={config.social_links.facebook}
                     className="text-blue-600 hover:text-blue-700 font-medium transition-colors"
                   >
                     Facebook
                   </a>
                   <a
-                    href="#"
+                    href={config.social_links.twitter}
                     className="text-red-600 hover:text-red-700 font-medium transition-colors"
                   >
-                    Youtube
+                    Twitter
                   </a>
                 </div>
               </div>

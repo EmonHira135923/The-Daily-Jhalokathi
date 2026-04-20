@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import config from '../../data/config.json';
 
 const Navvar = () => {
   const pathname = usePathname();
@@ -110,11 +111,11 @@ const Navvar = () => {
         <div className="shrink-0">
           <Link href="/">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-red-600 tracking-tight leading-none">
-              দৈনিক ঝালকাঠি
+              {config.site_name_bangla}
             </h1>
           </Link>
           <p className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.3em] text-gray-400 font-roboto mt-0.5 pl-0.5">
-            The Daily Jhalokathi
+            {config.site_name_english}
           </p>
         </div>
 
@@ -129,7 +130,7 @@ const Navvar = () => {
               href="/contact"
               className="text-sm sm:text-xl md:text-2xl font-black text-red-600"
             >
-              যোগাযোগ করুন
+              {config.Advertisement.main_title}
             </Link>
           </div>
           <div
@@ -141,7 +142,7 @@ const Navvar = () => {
               href="/contact"
               className="text-[12px] sm:text-xl md:text-2xl font-black text-red-600"
             >
-              বিজ্ঞাপন দিতে যোগাযোগ করুন
+             {config.Advertisement.sub_title}
             </Link>
           </div>
         </div>

@@ -1,0 +1,18 @@
+{
+  "site_name_english": "The Daily Jhalokathi",
+  "site_name_bangla": "দৈনিক ঝালকাঠি",
+  "site_description": "ঝালকাঠির সর্বাধিক পঠিত ও বিশ্বস্ত সংবাদ মাধ্যম। আমরা আপনাদের জন্য নিয়ে আসি ঝালকাঠি ও দেশের সর্বশেষ খবর, বিশ্লেষণ এবং বিশেষ প্রতিবেদন। আমাদের লক্ষ্য হলো সত্য ও নির্ভরযোগ্য সংবাদ পরিবেশন করা, যা আপনাদের দৈনন্দিন জীবনে প্রয়োজনীয় তথ্য সরবরাহ করবে।",
+  "email": "contact@dailyjhalokathi.com",
+  "phone": "+880123456789",
+  "address": "ঝালকাঠি সদর, ঝালকাঠি, বাংলাদেশ",
+  "Advertisement":{
+    "main_title": "বিজ্ঞাপন দেওয়ার জন্য",
+    "sub_title": "আমাদের সাথে যোগাযোগ করুন"
+  },
+    "social_links": {
+        "facebook": "https://www.facebook.com/dailyjhalokathi",
+        "twitter": "https://twitter.com/dailyjhalokathi",
+        "instagram": "https://www.instagram.com/dailyjhalokathi",
+        "linkedin": "https://www.linkedin.com/company/dailyjhalokathi"
+    }
+}
