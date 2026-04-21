@@ -1,5 +1,3 @@
-// lib/cloudinary.js
-
 export const uploadToCloudinary = async (file) => {
   if (!file) return null;
 
@@ -10,18 +8,17 @@ export const uploadToCloudinary = async (file) => {
   try {
     const res = await fetch(
       `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
-      { 
-        method: "POST", 
-        body: formData 
-      }
+      { method: "POST", body: formData }
     );
 
-    if (!res.ok) {
-        throw new Error("Failed to upload image to Cloudinary");
-    }
+    if (!res.ok) throw new Error("Failed to upload image");
 
     const data = await res.json();
-    return data.secure_url; // এটি ইমেজের ডিরেক্ট লিঙ্ক রিটার্ন করবে
+    // এখানে secure_url এবং public_id দুটিই রিটার্ন করছি
+    return {
+      secure_url: data.secure_url,
+      public_id: data.public_id
+    };
   } catch (error) {
     console.error("Cloudinary Upload Error:", error);
     return null;

@@ -48,6 +48,7 @@ const Myprofile = () => {
     { label: "পূর্ণ নাম", value: user.name, icon: "👤" },
     { label: "ইমেইল এড্রেস", value: user.email, icon: "✉️" },
     { label: "ভূমিকা", value: user.role === "admin" ? "অ্যাডমিন" : "সদস্য", icon: "🏷️" },
+    { label: "মোবাইল নম্বর", value: user.phone || "নিয়মিত", icon: "📱" },
     {
       label: "একাউন্ট স্ট্যাটাস",
       value: "সক্রিয়",
@@ -139,7 +140,17 @@ const Myprofile = () => {
       </div>
 
       {/* ── Green Update Modal ── */}
-      <ProfileUpdate/>      
+     <ProfileUpdate 
+        user={user} 
+        refreshProfile={() => {
+          // ডাটা আপডেট হওয়ার পর আবার সার্ভার থেকে লেটেস্ট ডাটা নিয়ে আসবে
+          const getProfile = async () => {
+            const data = await fetchUserProfile();
+            if (data.success) setUser(data.result);
+          };
+          getProfile();
+        }} 
+      />     
 
     </div>
   );
