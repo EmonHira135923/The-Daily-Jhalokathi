@@ -42,7 +42,7 @@ const Myprofile = () => {
     );
   }
 
-  const avatarSrc = user.image || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+  const avatarSrc = user?.image?.secure_url || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
   const infoRows = [
     { label: "পূর্ণ নাম", value: user.name, icon: "👤" },

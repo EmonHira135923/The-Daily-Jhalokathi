@@ -127,7 +127,7 @@ const Anavvar = () => {
                   🏠 হোমপেজ
                 </Link>
                 <Link
-                  href="/dashboard/profile"
+                  href="/profile"
                   onClick={() => setShowDropdown(false)}
                   className="flex items-center gap-2.5 px-4 py-2 text-[13px] font-semibold text-gray-700 hover:bg-red-50 hover:text-red-600"
                 >
