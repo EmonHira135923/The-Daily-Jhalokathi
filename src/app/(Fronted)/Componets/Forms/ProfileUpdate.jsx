@@ -19,7 +19,7 @@ const ProfileUpdate = ({ user, refreshProfile }) => {
   useEffect(() => {
     if (user) {
       reset({ phone: user.phone || "" });
-      setPreview(user.image || null);
+      setPreview(user.image?.secure_url || null);
     }
   }, [user, reset]);
 
