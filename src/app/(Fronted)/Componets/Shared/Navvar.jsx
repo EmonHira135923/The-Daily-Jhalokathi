@@ -7,7 +7,6 @@ import { toast } from "react-toastify";
 import config from "../../data/config.json";
 import { fetchUserProfile, logoutUser } from "@/app/(Backend)/lib/auth";
 
-
 const Navvar = () => {
   const pathname = usePathname();
   const redirectpage = useRouter();
@@ -15,15 +14,15 @@ const Navvar = () => {
 
   // Auth States
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // Skeleton এর জন্য নতুন স্টেট
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const modalRef = useRef(null);
 
-  // ইউজার ডাটা চেক (Skeleton Support সহ)
+  // ইউজার ডাটা চেক
   useEffect(() => {
     const getAuth = async () => {
-      setLoading(true); // ডাটা ফেচিং শুরু
+      setLoading(true);
       try {
         const data = await fetchUserProfile();
         if (data?.success) setUser(data.result);
@@ -31,7 +30,7 @@ const Navvar = () => {
       } catch (error) {
         setUser(null);
       } finally {
-        setLoading(false); // ফেচিং শেষ
+        setLoading(false);
       }
     };
     getAuth();
@@ -105,19 +104,21 @@ const Navvar = () => {
     { name: "মতামত", slug: "opinion" },
   ];
 
-  const avatarSrc = user?.image || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+  // --- ইমেজ লজিক ফিক্স (অবজেক্ট এবং স্ট্রিং হ্যান্ডেল করার জন্য) ---
+  const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+  
+  // চেক করা হচ্ছে image অবজেক্টের ভেতর secure_url আছে কি না, নাহলে সরাসরি স্ট্রিং কি না
+  const avatarSrc = user?.image?.secure_url || (typeof user?.image === "string" ? user.image : defaultAvatar);
 
   return (
     <header className="w-full bg-white font-banglafont border-b border-gray-200 shadow-sm sticky top-0 z-50">
       
-      {/* ── Row 1: Date + Weather + Auth ── */}
       <div className="bg-gray-50 border-b border-gray-100">
         <div className="container mx-auto px-3 py-1.5 flex items-center justify-between gap-2">
           
           <p className="text-[11px] sm:text-[12px] text-gray-500 leading-tight">{currentDate}</p>
 
           <div className="flex items-center gap-2 shrink-0">
-            {/* Weather */}
             <div className="flex items-center gap-1 text-[11px] sm:text-[12px] text-gray-500">
               {weather.loading ? (
                 <span className="text-gray-400 text-[10px]">লোড...</span>
@@ -128,20 +129,24 @@ const Navvar = () => {
 
             <div className="w-px h-5 bg-gray-300" />
 
-            {/* Auth Section with Skeleton */}
             <div className="relative min-w-[40px] flex justify-end" ref={modalRef}>
               {loading ? (
-                // ১. স্কেলিটন লোডার (রিফ্রেশ দিলে এটি দেখাবে)
                 <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse border-2 border-gray-100" />
               ) : user ? (
                 <>
                   <button onClick={() => setShowModal((v) => !v)} className="relative focus:outline-none">
                     <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-red-600 shadow-sm transition-transform active:scale-95">
-                      <Image src={avatarSrc} alt="User" width={32} height={32} className="object-cover" unoptimized={avatarSrc.startsWith("https://cdn-icons")} />
+                      <Image 
+                        src={avatarSrc} 
+                        alt="User" 
+                        width={32} 
+                        height={32} 
+                        className="object-cover" 
+                        unoptimized={true} // ফ্ল্যাটআইকন বা ক্লাউডিনারি এরর এড়াতে unoptimized রাখা ভালো
+                      />
                     </div>
                   </button>
 
-                  {/* ── চোটো এবং ক্লিন মোডাল ── */}
                   {showModal && (
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 z-[200] overflow-hidden py-1 animate-in fade-in zoom-in duration-150">
                       <div className="px-4 py-2 border-b border-gray-50">
@@ -168,7 +173,6 @@ const Navvar = () => {
                   )}
                 </>
               ) : (
-                // ২. লগইন বাটন (চেক শেষ হলে)
                 <Link href="/login" className="inline-flex items-center gap-1 text-[11px] sm:text-[13px] font-medium px-3 py-1.5 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-all">
                   লগইন
                 </Link>

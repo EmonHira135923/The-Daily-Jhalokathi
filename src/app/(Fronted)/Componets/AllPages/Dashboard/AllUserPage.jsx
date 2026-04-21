@@ -11,6 +11,9 @@ const AllUserPage = () => {
   const [userToDelete, setUserToDelete] = useState(null);
   const [currentAdminId, setCurrentAdminId] = useState(null);
 
+  // ডিফল্ট ইমেজ যদি ইউজার এর কোনো ছবি না থাকে
+  const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+
   const fetchMyProfile = useCallback(async () => {
     try {
       const token = localStorage.getItem("accessToken"); 
@@ -84,40 +87,6 @@ const AllUserPage = () => {
     }
   };
 
-  // স্কেলিটন লোডার কম্পোনেন্ট (অভ্যন্তরীণ ব্যবহারের জন্য)
-  const TableSkeleton = () => (
-    <>
-      {[1, 2, 3, 4, 5].map((i) => (
-        <tr key={i} className="animate-pulse border-b border-gray-50">
-          <td>
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gray-200 rounded-xl"></div>
-              <div className="space-y-2">
-                <div className="h-4 w-24 bg-gray-200 rounded"></div>
-                <div className="h-3 w-16 bg-gray-100 rounded"></div>
-              </div>
-            </div>
-          </td>
-          <td>
-            <div className="space-y-2">
-              <div className="h-4 w-32 bg-gray-200 rounded"></div>
-              <div className="h-3 w-20 bg-gray-100 rounded"></div>
-            </div>
-          </td>
-          <td>
-            <div className="h-6 w-16 bg-gray-200 rounded-full"></div>
-          </td>
-          <td>
-            <div className="flex justify-center gap-2">
-              <div className="h-4 w-8 bg-gray-200 rounded"></div>
-              <div className="h-4 w-8 bg-gray-200 rounded"></div>
-            </div>
-          </td>
-        </tr>
-      ))}
-    </>
-  );
-
   return (
     <div className="p-6 bg-white rounded-2xl shadow-sm border border-gray-100 font-banglafont text-black">
       <div className="flex justify-between items-center mb-6">
@@ -139,55 +108,69 @@ const AllUserPage = () => {
             </tr>
           </thead>
           <tbody>
-            {loading ? (
-              <TableSkeleton />
-            ) : (
-              users.map((user) => {
-                const userId = user._id?.$oid ? String(user._id.$oid) : String(user._id);
-                const isMe = currentAdminId === userId;
+            {!loading && users.map((user) => {
+              const userId = user._id?.$oid ? String(user._id.$oid) : String(user._id);
+              const isMe = currentAdminId === userId;
 
-                return (
-                  <tr key={userId} className="hover:bg-gray-50/50 border-b border-gray-50">
-                    <td>
-                      <div className="flex items-center gap-3">
-                        <div className="relative w-12 h-12 rounded-xl overflow-hidden border">
-                          <Image src={user.image || "https://cdn-icons-png.flaticon.com/512/149/149071.png"} alt="user" fill className="object-cover" unoptimized />
-                        </div>
-                        <div>
-                          <div className="font-bold text-[14px]">
-                            {user.name} {isMe && <span className="text-blue-600 text-[10px] ml-1 font-normal">(আপনি)</span>}
-                          </div>
-                          <div className="text-[10px] text-gray-400 uppercase">ID: {userId?.slice(-6)}</div>
-                        </div>
+              // --- ইমেজ হ্যান্ডলিং ফিক্স ---
+              let imageLink = DEFAULT_AVATAR;
+              
+              if (user.image) {
+                // যদি image সরাসরি স্ট্রিং হয় (যেমন flaticon লিঙ্ক)
+                if (typeof user.image === "string" && user.image.trim() !== "") {
+                  imageLink = user.image;
+                } 
+                // যদি image আপনার পাঠানো JSON এর মতো অবজেক্ট হয়
+                else if (user.image.secure_url) {
+                  imageLink = user.image.secure_url;
+                }
+              }
+
+              return (
+                <tr key={userId} className="hover:bg-gray-50/50 border-b border-gray-50">
+                  <td>
+                    <div className="flex items-center gap-3">
+                      <div className="relative w-12 h-12 rounded-xl overflow-hidden border">
+                        <Image 
+                          src={imageLink} 
+                          alt={user.name || "user"} 
+                          fill 
+                          className="object-cover" 
+                          unoptimized={imageLink.includes("cloudinary") || imageLink.includes("flaticon")} 
+                        />
                       </div>
-                    </td>
-                    <td>
-                        <div className="text-[13px]">{user.email}</div>
-                        <div className="text-[11px] text-gray-400">{user.phone || "No Phone"}</div>
-                    </td>
-                    <td>
-                      <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${user.role === "admin" ? "bg-red-100 text-red-600" : "bg-green-100 text-green-600"}`}>
-                        {user.role === "admin" ? "অ্যাডমিন" : "সদস্য"}
-                      </span>
-                    </td>
-                    <td className="text-center">
-                      <div className="flex justify-center gap-2">
-                        <button onClick={() => {setSelectedUser(user); document.getElementById("admin_edit_modal").showModal();}} className="text-blue-600 hover:underline text-xs">এডিট</button>
-                        
-                        <button 
-                          onClick={() => openDeleteModal(user)} 
-                          disabled={isMe}
-                          className={`text-xs font-bold transition-all ${isMe ? "text-gray-300 cursor-not-allowed opacity-50" : "text-red-600 hover:underline"}`}
-                          title={isMe ? "আপনি নিজেকে ডিলিট করতে পারবেন না" : ""}
-                        >
-                          {isMe ? "Protected" : "ডিলিট"}
-                        </button>
+                      <div>
+                        <div className="font-bold text-[14px]">
+                          {user.name} {isMe && <span className="text-blue-600 text-[10px] ml-1 font-normal">(আপনি)</span>}
+                        </div>
+                        <div className="text-[10px] text-gray-400 uppercase">ID: {userId?.slice(-6)}</div>
                       </div>
-                    </td>
-                  </tr>
-                );
-              })
-            )}
+                    </div>
+                  </td>
+                  <td>
+                    <div className="text-[13px]">{user.email}</div>
+                    <div className="text-[11px] text-gray-400">{user.phone || "No Phone"}</div>
+                  </td>
+                  <td>
+                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${user.role === "admin" ? "bg-red-100 text-red-600" : "bg-green-100 text-green-600"}`}>
+                      {user.role === "admin" ? "অ্যাডমিন" : "সদস্য"}
+                    </span>
+                  </td>
+                  <td className="text-center">
+                    <div className="flex justify-center gap-2">
+                      <button onClick={() => {setSelectedUser(user); document.getElementById("admin_edit_modal").showModal();}} className="text-blue-600 hover:underline text-xs">এডিট</button>
+                      <button 
+                        onClick={() => openDeleteModal(user)} 
+                        disabled={isMe}
+                        className={`text-xs font-bold transition-all ${isMe ? "text-gray-300 cursor-not-allowed opacity-50" : "text-red-600 hover:underline"}`}
+                      >
+                        {isMe ? "Protected" : "ডিলিট"}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
