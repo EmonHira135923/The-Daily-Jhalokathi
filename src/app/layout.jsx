@@ -1,8 +1,8 @@
 import { Hind_Siliguri, Roboto } from "next/font/google";
 import "./globals.css";
 import { ToastContainer } from "react-toastify";
-import Navvar from "./(Fronted)/Componets/Shared/Navvar";
 import Footer from "./(Fronted)/Componets/Shared/Footer";
+import Header from "./(Fronted)/Componets/Shared/Header";
 
 // Font
 const roboto = Roboto({
@@ -34,10 +34,10 @@ const categories = [
 
 // SEO keywords
 const categoryKeywords = categories.flatMap((c) => [
-  c.name,                          // Bangla
-  c.slug,                          // English slug
-  `${c.name} সংবাদ`,               // Bangla SEO
-  `${c.name} news`,                // English SEO
+  c.name, // Bangla
+  c.slug, // English slug
+  `${c.name} সংবাদ`, // Bangla SEO
+  `${c.name} news`, // English SEO
 ]);
 
 // metadata
@@ -135,8 +135,8 @@ export default function RootLayout({ children }) {
       className={`${banglafont.variable} ${roboto.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <ToastContainer/>
-        <Navvar />
+        <ToastContainer />
+        <Header/>
         {children}
         <Footer />
       </body>

@@ -2,13 +2,15 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import config from "../../data/config.json";
 import { fetchUserProfile, logoutUser } from "@/app/(Backend)/lib/auth";
 
+
 const Navvar = () => {
   const pathname = usePathname();
+  const redirectpage = useRouter();
   const [showFirstText, setShowFirstText] = useState(true);
 
   // Auth States
@@ -53,6 +55,7 @@ const Navvar = () => {
       setUser(null);
       setShowModal(false);
       toast.success("✅ সফলভাবে লগআউট হয়েছেন!");
+      redirectpage.push("/login");
     } catch {
       toast.error("❌ লগআউট করতে সমস্যা হয়েছে");
     } finally {

@@ -3,8 +3,13 @@ import React from 'react';
 import Link from 'next/link';
 import { FaFacebook, FaYoutube, FaEnvelope, FaMapMarkerAlt, FaPhone } from 'react-icons/fa';
 import config from '../../data/config.json';
+import { usePathname } from 'next/navigation';
 
 const Footer = () => {
+
+  const pathName = usePathname();
+   if(pathName.startsWith("/dashboard")) return <></>;
+
   // ১. ডায়নামিক বছর বের করা
   const currentYear = new Date().getFullYear();
 
