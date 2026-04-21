@@ -1,5 +1,5 @@
 import React from "react";
-import DashboardHome from "../Componets/AllPages/DashboardHome";
+import DashboardHome from "../Componets/AllPages/Dashboard/DashboardHome";
 
 export const metadata = {
   title: "ড্যাশবোর্ড | দৈনিক ঝালকাঠি অ্যাডমিন",
