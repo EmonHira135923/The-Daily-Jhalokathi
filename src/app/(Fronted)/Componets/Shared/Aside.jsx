@@ -170,6 +170,19 @@ const Aside = ({ sidebarOpen, onClose, collapsed }) => {
                       নতুন খবর
                     </Link>
 
+                    {/* Breaking News */}
+                    <Link
+                      href="/dashboard/breaking-news"
+                      onClick={onClose}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-lg text-[12px] font-semibold transition-all
+                        ${pathname === "/dashboard/breaking-news" ? "bg-gray-100 text-black" : "text-gray-400 hover:text-black hover:bg-gray-50"}
+                      `}
+                    >
+                      <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 012-2h6M9 10h6m-6 4h6m5 0a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h14a2 2 0 002-2z" />
+                      </svg>
+                      ব্রেকিং নিউজ
+                    </Link>
                   </div>
                 </div>
               )}
