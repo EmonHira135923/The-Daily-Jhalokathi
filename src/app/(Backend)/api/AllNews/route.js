@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getNews } from "../../lib/dbConnect";
+import { v2 as cloudinary } from "cloudinary";
+
+cloudinary.config({
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 // ১. GET: সব খবর পড়ার জন্য
 export async function GET(request) {
@@ -31,6 +38,7 @@ export async function GET(request) {
   }
 }
 
+// ২. POST: নতুন খবর যোগ করার জন্য
 export async function POST(request) {
   try {
     const newsCollection = await getNews();
@@ -48,14 +56,12 @@ export async function POST(request) {
       slug: data.slug.trim().toLowerCase(),
       description: data.description || "",
       image: data.image || "",
+      imagePublicId: data.imagePublicId || "",
       time: data.time || "",
       date: data.date || "",
       author: data.author || "",
       content: data.content || [],
-      quote: data.quote || {
-        text: "",
-        author: "",
-      },
+      quote: data.quote || { text: "", author: "" },
       featured: data.featured || false,
       side: data.side || false,
       createdAt: new Date(),
@@ -105,9 +111,42 @@ export async function DELETE(request) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 
-    const result = await newsCollection.deleteOne({ _id: new ObjectId(id) });
-    return NextResponse.json({ success: true, message: "ডিলিট সফল" });
+    if (!id) {
+      return NextResponse.json(
+        { success: false, message: "ID প্রয়োজন" },
+        { status: 400 }
+      );
+    }
+
+    const news = await newsCollection.findOne({
+      _id: new ObjectId(id),
+    });
+
+    if (!news) {
+      return NextResponse.json(
+        { success: false, message: "খবর পাওয়া যায়নি" },
+        { status: 404 }
+      );
+    }
+
+    // Cloudinary image delete
+    if (news.imagePublicId) {
+      await cloudinary.uploader.destroy(news.imagePublicId);
+    }
+
+    // Mongo delete
+    await newsCollection.deleteOne({
+      _id: new ObjectId(id),
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: "খবর ও ছবি ডিলিট সফল",
+    });
   } catch (err) {
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: err.message },
+      { status: 500 }
+    );
   }
 }
