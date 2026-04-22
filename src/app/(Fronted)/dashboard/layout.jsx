@@ -1,6 +1,7 @@
-import React from "react";
-import Aside from "../Componets/Shared/Aside";
-import Anavvar from "../Componets/Shared/Anavvar";
+// app/(dashboard)/layout.js  — Server Component wrapping a Client layout shell
+
+import DashboardLayoutClient from "../Componets/Shared/Dashboardlayoutclient";
+
 
 export const metadata = {
   title: {
@@ -27,39 +28,7 @@ export const metadata = {
 };
 
 const DashboardLayout = ({ children }) => {
-  return (
-    <div className="flex min-h-screen bg-gray-50">
-
-      {/* Fixed Sidebar */}
-      <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 z-20">
-        <Aside />
-      </div>
-
-      {/* Main Content */}
-      <div className="flex flex-col flex-1 md:pl-64">
-
-        {/* Sticky Top Navbar */}
-        <header className="sticky top-0 z-10 bg-white shadow-none border-b border-gray-100">
-          <Anavvar />
-        </header>
-
-        {/* Page Content */}
-        <main className="flex-1 p-5 sm:p-6">
-          <div className="mx-auto max-w-7xl">
-            {children}
-          </div>
-        </main>
-
-        {/* Footer */}
-        <footer className="px-6 py-4 border-t border-gray-100 bg-white">
-          <p className="text-[11px] text-gray-400 text-center">
-            © {new Date().getFullYear()} দৈনিক ঝালকাঠি — সর্বস্বত্ব সংরক্ষিত
-          </p>
-        </footer>
-
-      </div>
-    </div>
-  );
+  return <DashboardLayoutClient>{children}</DashboardLayoutClient>;
 };
 
 export default DashboardLayout;
