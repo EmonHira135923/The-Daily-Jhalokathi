@@ -394,11 +394,6 @@ const AllNewsPage = () => {
             ) : (
               <span className="font-bold text-black">{newsList.length}</span>
             )}
-            {!loading && newsList.length > 0 && (
-              <span className="ml-2 text-gray-400 text-xs">
-                · পৃষ্ঠা {currentPage}/{totalPages} · প্রতি পৃষ্ঠায় {PAGE_SIZE}টি
-              </span>
-            )}
           </p>
         </div>
         <Link
