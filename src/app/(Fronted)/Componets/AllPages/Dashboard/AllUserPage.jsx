@@ -1,17 +1,107 @@
 "use client";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import Image from "next/image";
 import { toast } from "react-toastify";
 import AdminUserUpdate from "../../Forms/Admin/AdminUserUpdate";
 
+const PAGE_SIZE = 10;
+
+// ── Pagination ────────────────────────────────────────────────────────────────
+const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+  const pages = useMemo(() => {
+    const arr = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) arr.push(i);
+    } else {
+      arr.push(1);
+      if (currentPage > 3) arr.push("...");
+      const start = Math.max(2, currentPage - 1);
+      const end = Math.min(totalPages - 1, currentPage + 1);
+      for (let i = start; i <= end; i++) arr.push(i);
+      if (currentPage < totalPages - 2) arr.push("...");
+      arr.push(totalPages);
+    }
+    return arr;
+  }, [currentPage, totalPages]);
+
+  if (totalPages <= 1) return null;
+
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-4 border-t border-gray-100">
+      <p className="text-xs text-gray-400 shrink-0">
+        পৃষ্ঠা <span className="font-bold text-gray-700">{currentPage}</span> /{" "}
+        <span className="font-bold text-gray-700">{totalPages}</span>
+      </p>
+
+      <div className="flex items-center gap-1 flex-wrap">
+        {/* Prev */}
+        <button
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 transition-all flex items-center gap-1 text-gray-600"
+        >
+          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+          <span className="hidden xs:inline">আগে</span>
+        </button>
+
+        {/* Page numbers */}
+        <div className="flex items-center gap-1">
+          {pages.map((p, idx) =>
+            p === "..." ? (
+              <span key={`dots-${idx}`} className="px-2 text-gray-300 text-xs select-none">
+                ···
+              </span>
+            ) : (
+              <button
+                key={p}
+                onClick={() => onPageChange(p)}
+                className={`w-8 h-8 text-xs font-bold rounded-lg transition-all active:scale-95 ${
+                  p === currentPage
+                    ? "bg-red-600 text-white shadow-sm shadow-red-200"
+                    : "hover:bg-gray-100 text-gray-600 border border-gray-200"
+                }`}
+              >
+                {p}
+              </button>
+            )
+          )}
+        </div>
+
+        {/* Next */}
+        <button
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 transition-all flex items-center gap-1 text-gray-600"
+        >
+          <span className="hidden xs:inline">পরে</span>
+          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// ── Main Component ────────────────────────────────────────────────────────────
 const AllUserPage = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
   const [userToDelete, setUserToDelete] = useState(null);
   const [currentAdminId, setCurrentAdminId] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+
+  // ── Pagination ──
+  const totalPages = Math.ceil(users.length / PAGE_SIZE);
+  const pagedUsers = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return users.slice(start, start + PAGE_SIZE);
+  }, [users, currentPage]);
 
   const fetchMyProfile = useCallback(async () => {
     try {
@@ -35,7 +125,10 @@ const AllUserPage = () => {
     try {
       const res = await fetch("/api/auth/register", { cache: "no-store" });
       const data = await res.json();
-      if (data.success) setUsers(data.result);
+      if (data.success) {
+        setUsers(data.result);
+        setCurrentPage(1);
+      }
     } catch {
       toast.error("সার্ভার কানেকশন এরর!");
     } finally {
@@ -47,6 +140,11 @@ const AllUserPage = () => {
     fetchMyProfile();
     getAllUsers();
   }, [fetchMyProfile, getAllUsers]);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const confirmDelete = async () => {
     if (!userToDelete) return;
@@ -107,7 +205,7 @@ const AllUserPage = () => {
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 font-banglafont text-black overflow-hidden">
-      
+
       {/* Header */}
       <div className="flex flex-wrap gap-3 justify-between items-center px-4 sm:px-6 py-4 border-b border-gray-100">
         <div>
@@ -118,6 +216,11 @@ const AllUserPage = () => {
               <span className="animate-pulse inline-block w-5 h-3 bg-gray-200 rounded align-middle" />
             ) : (
               <span className="font-bold text-black">{users.length}</span>
+            )}
+            {!loading && users.length > 0 && (
+              <span className="ml-2 text-gray-400 text-xs">
+                · পৃষ্ঠা {currentPage}/{totalPages} · প্রতি পৃষ্ঠায় {PAGE_SIZE}জন
+              </span>
             )}
           </p>
         </div>
@@ -132,7 +235,7 @@ const AllUserPage = () => {
         </button>
       </div>
 
-      {/* ── Table (sm+) ── */}
+      {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
@@ -149,7 +252,7 @@ const AllUserPage = () => {
 
             {/* Data */}
             {!loading &&
-              users.map((user) => {
+              pagedUsers.map((user) => {
                 const userId = user._id?.$oid
                   ? String(user._id.$oid)
                   : String(user._id);
@@ -180,11 +283,9 @@ const AllUserPage = () => {
                             )}
                           </div>
                           <div className="text-[10px] text-gray-400">#{userId?.slice(-6)}</div>
-                          {/* Show email on mobile */}
                           <div className="text-[11px] text-gray-500 sm:hidden truncate max-w-[140px]">
                             {user.email}
                           </div>
-                          {/* Show role badge on mobile */}
                           <div className="mt-1 md:hidden">
                             <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
                               user.role === "admin"
@@ -198,13 +299,13 @@ const AllUserPage = () => {
                       </div>
                     </td>
 
-                    {/* Contact — hidden on mobile */}
+                    {/* Contact */}
                     <td className="px-4 py-3 hidden sm:table-cell">
                       <div className="text-[13px] text-gray-700 truncate max-w-[200px]">{user.email}</div>
                       <div className="text-[11px] text-gray-400">{user.phone || "ফোন নেই"}</div>
                     </td>
 
-                    {/* Role — hidden on mobile */}
+                    {/* Role */}
                     <td className="px-4 py-3 hidden md:table-cell">
                       <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${
                         user.role === "admin"
@@ -259,7 +360,16 @@ const AllUserPage = () => {
         </table>
       </div>
 
-      {/* ── Delete Confirm Modal ── */}
+      {/* Pagination */}
+      {!loading && users.length > PAGE_SIZE && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
+
+      {/* Delete Confirm Modal */}
       <dialog id="delete_confirm_modal" className="modal modal-bottom sm:modal-middle">
         <div className="modal-box bg-white text-black rounded-2xl font-banglafont">
           <h3 className="font-bold text-lg text-red-600">আপনি কি নিশ্চিত?</h3>
@@ -282,7 +392,7 @@ const AllUserPage = () => {
         </div>
       </dialog>
 
-      {/* ── Edit Modal ── */}
+      {/* Edit Modal */}
       <AdminUserUpdate user={selectedUser} refreshProfile={getAllUsers} />
     </div>
   );
