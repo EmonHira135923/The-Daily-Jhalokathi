@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import Image from "next/image";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
@@ -46,6 +46,7 @@ const SkeletonRow = ({ showQuote }) => (
       <div className="flex justify-center gap-2">
         <div className="w-8 h-8 bg-gray-100 rounded-lg" />
         <div className="w-8 h-8 bg-gray-100 rounded-lg" />
+        <div className="w-8 h-8 bg-gray-100 rounded-lg" />
       </div>
     </td>
   </tr>
@@ -73,16 +74,11 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-4 border-t border-gray-100">
-      {/* Info */}
       <p className="text-xs text-gray-400 shrink-0">
-        পৃষ্ঠা{" "}
-        <span className="font-bold text-gray-700">{currentPage}</span> /{" "}
+        পৃষ্ঠা <span className="font-bold text-gray-700">{currentPage}</span> /{" "}
         <span className="font-bold text-gray-700">{totalPages}</span>
       </p>
-
-      {/* Buttons */}
       <div className="flex items-center gap-1 flex-wrap">
-        {/* Prev */}
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
@@ -93,14 +89,10 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
           </svg>
           <span className="hidden xs:inline">আগে</span>
         </button>
-
-        {/* Page numbers */}
         <div className="flex items-center gap-1">
           {pages.map((p, idx) =>
             p === "..." ? (
-              <span key={`dots-${idx}`} className="px-2 text-gray-300 text-xs select-none">
-                ···
-              </span>
+              <span key={`dots-${idx}`} className="px-2 text-gray-300 text-xs select-none">···</span>
             ) : (
               <button
                 key={p}
@@ -116,8 +108,6 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
             )
           )}
         </div>
-
-        {/* Next */}
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
@@ -133,6 +123,117 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   );
 };
 
+// ── Status Badge ──────────────────────────────────────────────────────────────
+const StatusBadge = ({ news }) => {
+  if (news.featured)
+    return (
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-orange-50 text-orange-500 text-[10px] font-bold rounded-full border border-orange-100">
+        <span className="w-1.5 h-1.5 rounded-full bg-orange-400 inline-block" />
+        Featured
+      </span>
+    );
+  if (news.side)
+    return (
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[10px] font-bold rounded-full border border-indigo-100">
+        <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 inline-block" />
+        Side
+      </span>
+    );
+  return (
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-100 text-gray-400 text-[10px] font-bold rounded-full">
+      <span className="w-1.5 h-1.5 rounded-full bg-gray-300 inline-block" />
+      None
+    </span>
+  );
+};
+
+// ── Position Popup ────────────────────────────────────────────────────────────
+const PositionPopup = ({ news, onUpdate, onClose }) => {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) onClose();
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [onClose]);
+
+  const options = [
+    {
+      type: "featured",
+      label: "Featured",
+      desc: "হোমপেজের শীর্ষে দেখাবে",
+      active: !!news.featured,
+      activeCls: "bg-orange-500 text-white",
+      icon: (
+        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+        </svg>
+      ),
+    },
+    {
+      type: "side",
+      label: "Side",
+      desc: "পাশের কলামে দেখাবে",
+      active: !!news.side,
+      activeCls: "bg-indigo-600 text-white",
+      icon: (
+        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7" />
+        </svg>
+      ),
+    },
+    {
+      type: "none",
+      label: "None",
+      desc: "কোনো বিশেষ পজিশন নেই",
+      active: !news.featured && !news.side,
+      activeCls: "bg-gray-500 text-white",
+      icon: (
+        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+        </svg>
+      ),
+    },
+  ];
+
+  return (
+    <div
+      ref={ref}
+      className="absolute right-0 top-10 z-50 w-52 bg-white border border-gray-100 rounded-2xl shadow-xl shadow-gray-100/80 overflow-hidden"
+    >
+      <div className="px-3 py-2.5 border-b border-gray-50">
+        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">ডিসপ্লে পজিশন</p>
+      </div>
+      <div className="p-1.5 space-y-0.5">
+        {options.map((opt) => (
+          <button
+            key={opt.type}
+            onClick={() => { onUpdate(news.id, opt.type); onClose(); }}
+            className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left transition-all active:scale-95 ${
+              opt.active ? opt.activeCls : "hover:bg-gray-50 text-gray-600"
+            }`}
+          >
+            <span className={opt.active ? "opacity-100" : "opacity-40"}>{opt.icon}</span>
+            <div className="min-w-0 flex-1">
+              <p className="text-[12px] font-bold leading-none">{opt.label}</p>
+              <p className={`text-[10px] mt-0.5 leading-tight ${opt.active ? "opacity-75" : "text-gray-400"}`}>
+                {opt.desc}
+              </p>
+            </div>
+            {opt.active && (
+              <svg className="w-3.5 h-3.5 shrink-0 opacity-80" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
+            )}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 // ── Main Component ────────────────────────────────────────────────────────────
 const AllNewsPage = () => {
   const [newsList, setNewsList] = useState([]);
@@ -142,16 +243,15 @@ const AllNewsPage = () => {
   const [updating, setUpdating] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [openPopupId, setOpenPopupId] = useState(null);
 
   const { register, handleSubmit, reset } = useForm();
 
-  // ── কোনো খবরে quote আছে কিনা চেক ──
   const hasAnyQuote = useMemo(
     () => newsList.some((n) => n.quote?.text),
     [newsList]
   );
 
-  // ── বর্তমান পৃষ্ঠার ডাটা ──
   const totalPages = Math.ceil(newsList.length / PAGE_SIZE);
   const pagedNews = useMemo(() => {
     const start = (currentPage - 1) * PAGE_SIZE;
@@ -166,7 +266,7 @@ const AllNewsPage = () => {
       const result = await res.json();
       if (result.success) {
         setNewsList(result.data);
-        setCurrentPage(1); // রিফ্রেশে প্রথম পৃষ্ঠায় ফেরত
+        setCurrentPage(1);
       }
     } catch {
       toast.error("খবর লোড করতে সমস্যা হয়েছে");
@@ -179,13 +279,38 @@ const AllNewsPage = () => {
     fetchNews();
   }, [fetchNews]);
 
+  // ── Position আপডেট ──
+  const updateNewsStatus = async (newsId, type) => {
+    try {
+      const payload = {
+        featured: type === "featured",
+        side: type === "side",
+      };
+      const res = await fetch(`/api/AllNews?id=${newsId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const result = await res.json();
+      if (result.success) {
+        toast.success("পজিশন আপডেট হয়েছে");
+        setNewsList((prev) =>
+          prev.map((n) => (n.id === newsId ? { ...n, ...payload } : n))
+        );
+      } else {
+        toast.error("আপডেট ব্যর্থ হয়েছে");
+      }
+    } catch {
+      toast.error("সার্ভারে সমস্যা হয়েছে");
+    }
+  };
+
   // ── এডিট মডাল ──
   const openEditModal = (news) => {
     setSelectedNews(news);
     const contentString = Array.isArray(news.content)
       ? news.content.join("\n")
       : news.content;
-
     reset({
       title: news.title,
       slug: news.slug,
@@ -202,7 +327,6 @@ const AllNewsPage = () => {
     setUpdating(true);
     try {
       const { quoteText, quoteAuthor, ...rest } = data;
-
       const formattedData = {
         ...rest,
         content: data.content.split("\n").filter((line) => line.trim() !== ""),
@@ -211,15 +335,12 @@ const AllNewsPage = () => {
           author: quoteAuthor || "",
         },
       };
-
       const res = await fetch(`/api/AllNews?id=${selectedNews.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formattedData),
       });
-
       const result = await res.json();
-
       if (result.success) {
         toast.success("খবরটি সফলভাবে আপডেট হয়েছে");
         document.getElementById("update_modal").close();
@@ -255,7 +376,6 @@ const AllNewsPage = () => {
     }
   };
 
-  // ── পৃষ্ঠা পরিবর্তন ──
   const handlePageChange = (page) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -285,13 +405,7 @@ const AllNewsPage = () => {
           href="/dashboard/news/create"
           className="flex items-center gap-1.5 px-4 py-2 bg-red-600 hover:bg-red-700 active:scale-95 text-white text-sm font-bold rounded-xl transition-all"
         >
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2.5}
-          >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
           </svg>
           <span className="hidden xs:inline">নতুন খবর</span>
@@ -305,41 +419,27 @@ const AllNewsPage = () => {
           <thead>
             <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
               <th className="px-4 py-3 text-left font-semibold">খবরের বিবরণ</th>
-              <th className="px-4 py-3 text-left font-semibold hidden sm:table-cell">
-                লেখক ও সময়
-              </th>
-              <th className="px-4 py-3 text-left font-semibold hidden lg:table-cell">
-                বিস্তারিত
-              </th>
-              {/* Quote কলাম — শুধু যদি কোনো খবরে quote থাকে */}
+              <th className="px-4 py-3 text-left font-semibold hidden sm:table-cell">লেখক ও সময়</th>
+              <th className="px-4 py-3 text-left font-semibold hidden lg:table-cell">বিস্তারিত</th>
               {hasAnyQuote && (
-                <th className="px-4 py-3 text-left font-semibold hidden xl:table-cell">
-                  উক্তি
-                </th>
+                <th className="px-4 py-3 text-left font-semibold hidden xl:table-cell">উক্তি</th>
               )}
               <th className="px-4 py-3 text-center font-semibold">অ্যাকশন</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
-            {/* ── Skeleton ── */}
-            {loading &&
-              [1, 2, 3, 4, 5].map((i) => (
-                <SkeletonRow key={i} showQuote={false} />
-              ))}
+            {/* Skeleton */}
+            {loading && [1, 2, 3, 4, 5].map((i) => <SkeletonRow key={i} showQuote={false} />)}
 
-            {/* ── আসল ডাটা ── */}
+            {/* আসল ডাটা */}
             {!loading &&
               pagedNews.map((news) => {
-                const displayImage =
-                  news.image || news.thumbnail || "https://placehold.co/600x400";
+                const displayImage = news.image || news.thumbnail || "https://placehold.co/600x400";
                 const displayDate = news.date || news.formattedDate;
                 const hasQuote = !!news.quote?.text;
 
                 return (
-                  <tr
-                    key={news.id}
-                    className="hover:bg-gray-50/60 transition-colors group"
-                  >
+                  <tr key={news.id} className="hover:bg-gray-50/60 transition-colors group">
                     {/* ছবি ও শিরোনাম */}
                     <td className="px-0 py-0">
                       <Link
@@ -348,21 +448,19 @@ const AllNewsPage = () => {
                         className="flex items-center gap-3 px-4 py-3 hover:bg-blue-50/40 transition-all cursor-pointer"
                       >
                         <div className="relative w-14 h-14 rounded-xl overflow-hidden border border-gray-100 shrink-0 group-hover:scale-105 transition-transform duration-200">
-                          <Image
-                            src={displayImage}
-                            alt="news-thumb"
-                            fill
-                            className="object-cover"
-                            unoptimized
-                          />
+                          <Image src={displayImage} alt="news-thumb" fill className="object-cover" unoptimized />
                         </div>
                         <div className="min-w-0">
                           <p className="font-bold text-[13px] text-gray-800 leading-snug mb-1 group-hover:text-blue-600 transition-colors line-clamp-2 max-w-[160px] sm:max-w-[260px] md:max-w-[360px]">
                             {news.title}
                           </p>
-                          <span className="inline-block px-2 py-0.5 bg-red-50 text-red-600 text-[10px] font-bold rounded-full">
-                            {news.slug || "নিউজ"}
-                          </span>
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="inline-block px-2 py-0.5 bg-red-50 text-red-600 text-[10px] font-bold rounded-full">
+                              {news.slug || "নিউজ"}
+                            </span>
+                            {/* mobile এ badge */}
+                            <span className="sm:hidden"><StatusBadge news={news} /></span>
+                          </div>
                           <div className="sm:hidden mt-1 text-[10px] text-gray-400">
                             {news.author || "অজানা"} · {displayDate}
                           </div>
@@ -375,26 +473,24 @@ const AllNewsPage = () => {
                       <p className="text-xs font-bold text-gray-700 truncate max-w-[120px]">
                         {news.author || "অজানা লেখক"}
                       </p>
-                      <p className="text-[10px] text-gray-400 mt-1">
-                        📅 {displayDate}
-                      </p>
+                      <p className="text-[10px] text-gray-400 mt-1">📅 {displayDate}</p>
                       {news.time && (
-                        <p className="text-[10px] text-blue-500 font-medium">
-                          🕒 {news.time}
-                        </p>
+                        <p className="text-[10px] text-blue-500 font-medium">🕒 {news.time}</p>
                       )}
+                      {/* sm+ এ badge লেখকের নিচে */}
+                      <div className="mt-1.5">
+                        <StatusBadge news={news} />
+                      </div>
                     </td>
 
                     {/* কন্টেন্ট প্রিভিউ */}
                     <td className="px-4 py-3 hidden lg:table-cell">
                       <p className="text-[11px] text-gray-400 line-clamp-2 max-w-[200px]">
-                        {Array.isArray(news.content)
-                          ? news.content[0]
-                          : news.content}
+                        {Array.isArray(news.content) ? news.content[0] : news.content}
                       </p>
                     </td>
 
-                    {/* Quote কলাম — শুধু যদি সামগ্রিকভাবে কোনো quote থাকে */}
+                    {/* Quote কলাম */}
                     {hasAnyQuote && (
                       <td className="px-4 py-3 hidden xl:table-cell">
                         {hasQuote ? (
@@ -417,26 +513,18 @@ const AllNewsPage = () => {
                     {/* অ্যাকশন */}
                     <td className="px-4 py-3 text-center">
                       <div className="flex justify-center items-center gap-1.5">
+                        {/* এডিট */}
                         <button
                           onClick={() => openEditModal(news)}
                           className="p-2 hover:bg-blue-50 rounded-lg text-blue-500 hover:text-blue-700 active:scale-95 transition-all"
                           title="এডিট করুন"
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-4 w-4 sm:h-5 sm:w-5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                            />
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                           </svg>
                         </button>
+
+                        {/* ডিলিট */}
                         <button
                           onClick={() => {
                             setNewsToDelete(news);
@@ -445,50 +533,51 @@ const AllNewsPage = () => {
                           className="p-2 hover:bg-red-50 rounded-lg text-red-400 hover:text-red-600 active:scale-95 transition-all"
                           title="ডিলিট করুন"
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-4 w-4 sm:h-5 sm:w-5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                            />
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                           </svg>
                         </button>
+
+                        {/* ··· পজিশন বাটন */}
+                        <div className="relative">
+                          <button
+                            onClick={() =>
+                              setOpenPopupId(openPopupId === news.id ? null : news.id)
+                            }
+                            className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-gray-700 active:scale-95 transition-all"
+                            title="পজিশন পরিবর্তন করুন"
+                          >
+                            <svg className="h-4 w-4 sm:h-5 sm:w-5" fill="currentColor" viewBox="0 0 24 24">
+                              <circle cx="5" cy="12" r="1.5" />
+                              <circle cx="12" cy="12" r="1.5" />
+                              <circle cx="19" cy="12" r="1.5" />
+                            </svg>
+                          </button>
+
+                          {openPopupId === news.id && (
+                            <PositionPopup
+                              news={news}
+                              onUpdate={updateNewsStatus}
+                              onClose={() => setOpenPopupId(null)}
+                            />
+                          )}
+                        </div>
                       </div>
                     </td>
                   </tr>
                 );
               })}
 
-            {/* ── Empty state ── */}
+            {/* Empty state */}
             {!loading && newsList.length === 0 && (
               <tr>
                 <td colSpan={hasAnyQuote ? 5 : 4} className="px-4 py-16 text-center">
                   <div className="flex flex-col items-center gap-3 text-gray-400">
-                    <svg
-                      className="w-12 h-12 opacity-30"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l6 6v8a2 2 0 01-2 2z"
-                      />
+                    <svg className="w-12 h-12 opacity-30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l6 6v8a2 2 0 01-2 2z" />
                     </svg>
                     <p className="text-sm font-semibold">কোনো খবর পাওয়া যায়নি</p>
-                    <Link
-                      href="/dashboard/news/create"
-                      className="text-xs text-red-600 font-bold hover:underline"
-                    >
+                    <Link href="/dashboard/news/create" className="text-xs text-red-600 font-bold hover:underline">
                       + নতুন খবর যোগ করুন
                     </Link>
                   </div>
@@ -499,7 +588,7 @@ const AllNewsPage = () => {
         </table>
       </div>
 
-      {/* ── Pagination ── */}
+      {/* Pagination */}
       {!loading && newsList.length > PAGE_SIZE && (
         <Pagination
           currentPage={currentPage}
@@ -512,9 +601,7 @@ const AllNewsPage = () => {
       <dialog id="update_modal" className="modal modal-bottom sm:modal-middle">
         <div className="modal-box bg-white max-w-2xl w-full font-banglafont text-black rounded-2xl max-h-[90vh] overflow-y-auto">
           <div className="flex justify-between items-center mb-5 sticky top-0 bg-white pb-3 border-b border-gray-100 z-10">
-            <h3 className="font-bold text-lg sm:text-xl text-blue-600">
-              খবর এডিট করুন
-            </h3>
+            <h3 className="font-bold text-lg sm:text-xl text-blue-600">খবর এডিট করুন</h3>
             <button
               type="button"
               onClick={() => document.getElementById("update_modal").close()}
@@ -526,175 +613,89 @@ const AllNewsPage = () => {
 
           <form onSubmit={handleSubmit(onUpdateSubmit)} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* শিরোনাম */}
               <div className="sm:col-span-2">
-                <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">
-                  শিরোনাম
-                </label>
-                <input
-                  {...register("title")}
-                  className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all"
-                  placeholder="খবরের শিরোনাম লিখুন"
-                />
+                <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">শিরোনাম</label>
+                <input {...register("title")} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all" placeholder="খবরের শিরোনাম লিখুন" />
               </div>
-
-              {/* স্ল্যাগ */}
               <div>
-                <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">
-                  স্ল্যাগ
-                </label>
-                <input
-                  {...register("slug")}
-                  className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all"
-                />
+                <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">স্ল্যাগ</label>
+                <input {...register("slug")} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all" />
               </div>
-
-              {/* লেখক */}
               <div>
-                <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">
-                  লেখক / বিভাগ
-                </label>
-                <input
-                  {...register("author")}
-                  className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all"
-                />
+                <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">লেখক / বিভাগ</label>
+                <input {...register("author")} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all" />
               </div>
-
-              {/* ইমেজ */}
               <div className="sm:col-span-2">
-                <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">
-                  ইমেজ URL
-                </label>
-                <input
-                  {...register("image")}
-                  className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all"
-                  placeholder="https://..."
-                />
+                <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">ইমেজ URL</label>
+                <input {...register("image")} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all" placeholder="https://..." />
               </div>
 
-              {/* উক্তি সেকশন — সবসময় দেখাবে, কিন্তু ডাটা থাকলে পূর্ণ হবে */}
+              {/* উক্তি সেকশন */}
               <div className="sm:col-span-2 border border-dashed border-indigo-100 bg-indigo-50/30 rounded-xl p-4">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-indigo-500 text-base">❝</span>
-                  <h4 className="text-xs font-bold text-indigo-600 uppercase tracking-widest">
-                    বিশেষ উক্তি (Quote)
-                  </h4>
-                  <span className="text-[10px] text-gray-400 font-normal normal-case">
-                    — ঐচ্ছিক
-                  </span>
+                  <h4 className="text-xs font-bold text-indigo-600 uppercase tracking-widest">বিশেষ উক্তি (Quote)</h4>
+                  <span className="text-[10px] text-gray-400 font-normal normal-case">— ঐচ্ছিক</span>
                 </div>
                 <div className="grid grid-cols-1 gap-3">
                   <div>
-                    <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1.5">
-                      উক্তির টেক্সট
-                    </label>
-                    <textarea
-                      {...register("quoteText")}
-                      rows={2}
-                      className="w-full px-3 py-2.5 bg-white border border-indigo-100 rounded-xl text-sm focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 transition-all resize-none"
-                      placeholder="যেমন: প্রযুক্তিই আগামী দিনের চালিকাশক্তি।"
-                    />
+                    <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1.5">উক্তির টেক্সট</label>
+                    <textarea {...register("quoteText")} rows={2} className="w-full px-3 py-2.5 bg-white border border-indigo-100 rounded-xl text-sm focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 transition-all resize-none" placeholder="যেমন: প্রযুক্তিই আগামী দিনের চালিকাশক্তি।" />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1.5">
-                      উক্তি দাতার নাম
-                    </label>
-                    <input
-                      {...register("quoteAuthor")}
-                      className="w-full px-3 py-2.5 bg-white border border-indigo-100 rounded-xl text-sm focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 transition-all"
-                      placeholder="যেমন: জেলা প্রশাসক"
-                    />
+                    <label className="block text-[11px] font-bold text-gray-500 uppercase mb-1.5">উক্তি দাতার নাম</label>
+                    <input {...register("quoteAuthor")} className="w-full px-3 py-2.5 bg-white border border-indigo-100 rounded-xl text-sm focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 transition-all" placeholder="যেমন: জেলা প্রশাসক" />
                   </div>
                 </div>
               </div>
 
-              {/* কন্টেন্ট */}
               <div className="sm:col-span-2">
                 <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">
-                  বিস্তারিত{" "}
-                  <span className="normal-case text-gray-400 font-normal">
-                    (নতুন লাইনে প্যারা আলাদা করুন)
-                  </span>
+                  বিস্তারিত <span className="normal-case text-gray-400 font-normal">(নতুন লাইনে প্যারা আলাদা করুন)</span>
                 </label>
-                <textarea
-                  {...register("content")}
-                  rows={7}
-                  className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all resize-none leading-relaxed"
-                  placeholder="এখানে খবরের বর্ণনা লিখুন..."
-                />
+                <textarea {...register("content")} rows={7} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all resize-none leading-relaxed" placeholder="এখানে খবরের বর্ণনা লিখুন..." />
               </div>
             </div>
 
-            <div className="flex gap-3 pt-1 sticky bottom-0 bg-white pt-3 border-t border-gray-100">
-              <button
-                type="submit"
-                disabled={updating}
-                className="flex-1 sm:flex-none px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white text-sm font-bold rounded-xl active:scale-95 transition-all"
-              >
+            <div className="flex gap-3 pt-3 sticky bottom-0 bg-white border-t border-gray-100">
+              <button type="submit" disabled={updating} className="flex-1 sm:flex-none px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white text-sm font-bold rounded-xl active:scale-95 transition-all">
                 {updating ? "আপডেট হচ্ছে..." : "আপডেট করুন"}
               </button>
-              <button
-                type="button"
-                onClick={() => document.getElementById("update_modal").close()}
-                className="flex-1 sm:flex-none px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold rounded-xl active:scale-95 transition-all"
-              >
+              <button type="button" onClick={() => document.getElementById("update_modal").close()} className="flex-1 sm:flex-none px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold rounded-xl active:scale-95 transition-all">
                 বাতিল
               </button>
             </div>
           </form>
         </div>
-        <form method="dialog" className="modal-backdrop">
-          <button>close</button>
-        </form>
+        <form method="dialog" className="modal-backdrop"><button>close</button></form>
       </dialog>
 
-      {/* ── ডিলিট কনফার্মেশন মডাল ── */}
+      {/* ── ডিলিট মডাল ── */}
       <dialog id="delete_modal" className="modal modal-bottom sm:modal-middle">
         <div className="modal-box bg-white font-banglafont text-black rounded-2xl">
           <div className="text-center mb-4">
             <div className="w-14 h-14 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-3">
-              <svg
-                className="w-7 h-7 text-red-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                />
+              <svg className="w-7 h-7 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>
             </div>
             <h3 className="font-bold text-lg text-red-600">আপনি কি নিশ্চিত?</h3>
             <p className="mt-2 text-sm text-gray-600 leading-relaxed">
               <b>"{newsToDelete?.title}"</b> খবরটি মুছে ফেলতে চান?
               <br />
-              <span className="text-xs text-gray-400">
-                এটি আর ফিরে পাওয়া যাবে না।
-              </span>
+              <span className="text-xs text-gray-400">এটি আর ফিরে পাওয়া যাবে না।</span>
             </p>
           </div>
-
           <div className="flex gap-3">
-            <button
-              onClick={handleDelete}
-              disabled={deleting}
-              className="flex-1 py-2.5 bg-red-600 hover:bg-red-700 disabled:opacity-60 text-white text-sm font-bold rounded-xl active:scale-95 transition-all"
-            >
+            <button onClick={handleDelete} disabled={deleting} className="flex-1 py-2.5 bg-red-600 hover:bg-red-700 disabled:opacity-60 text-white text-sm font-bold rounded-xl active:scale-95 transition-all">
               {deleting ? "মুছছে..." : "হ্যাঁ, ডিলিট করুন"}
             </button>
             <form method="dialog" className="flex-1">
-              <button className="w-full py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold rounded-xl active:scale-95 transition-all">
-                বাতিল
-              </button>
+              <button className="w-full py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold rounded-xl active:scale-95 transition-all">বাতিল</button>
             </form>
           </div>
         </div>
-        <form method="dialog" className="modal-backdrop">
-          <button>close</button>
-        </form>
+        <form method="dialog" className="modal-backdrop"><button>close</button></form>
       </dialog>
     </div>
   );

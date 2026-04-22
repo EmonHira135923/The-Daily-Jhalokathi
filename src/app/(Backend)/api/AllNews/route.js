@@ -31,46 +31,48 @@ export async function GET(request) {
   }
 }
 
-// ২. POST: নতুন খবর (অ্যাডমিন দ্বারা)
 export async function POST(request) {
   try {
     const newsCollection = await getNews();
     const data = await request.json();
 
-    /* Front-end থেকে data যেভাবে আসবে:
-      {
-        title: "...",
-        slug: "...",
-        thumbnail: "cloudinary_url",
-        blocks: [
-          { type: "paragraph", value: "..." },
-          { type: "subheading", value: "..." },
-          { type: "quote", value: "..." },
-          { type: "image", value: "optional_extra_image_url" }
-        ],
-        category: "..."
-      }
-    */
-
     if (!data.title || !data.slug) {
-      return NextResponse.json({ success: false, message: "শিরোনাম ও স্ল্যাগ প্রয়োজন" }, { status: 400 });
+      return NextResponse.json(
+        { success: false, message: "শিরোনাম ও স্ল্যাগ প্রয়োজন" },
+        { status: 400 }
+      );
     }
 
     const newPost = {
       title: data.title,
       slug: data.slug.trim().toLowerCase(),
-      thumbnail: data.thumbnail, // Cloudinary থেকে আসা মেইন ইমেজ
-      blocks: data.blocks || [],  // এখানে সাব-হেডিং, কোট সব থাকবে
-      category: data.category,
-      authorId: data.authorId,
+      description: data.description || "",
+      image: data.image || "",
+      time: data.time || "",
+      date: data.date || "",
+      author: data.author || "",
+      content: data.content || [],
+      quote: data.quote || {
+        text: "",
+        author: "",
+      },
+      featured: data.featured || false,
+      side: data.side || false,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
     const result = await newsCollection.insertOne(newPost);
-    return NextResponse.json({ success: true, insertedId: result.insertedId }, { status: 201 });
+
+    return NextResponse.json({
+      success: true,
+      insertedId: result.insertedId,
+    });
   } catch (err) {
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: err.message },
+      { status: 500 }
+    );
   }
 }
 
