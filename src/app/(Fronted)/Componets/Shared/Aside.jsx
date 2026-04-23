@@ -6,11 +6,19 @@ import React, { useState } from "react";
 const Aside = ({ sidebarOpen, onClose, collapsed }) => {
   const pathname = usePathname();
   const [newsOpen, setNewsOpen] = useState(
-    pathname.startsWith("/dashboard/news")
+    pathname.startsWith("/dashboard/news"),
+  );
+
+  const [engagementOpen, setEngagementOpen] = useState(
+    pathname.startsWith("/dashboard/comments") ||
+      pathname.startsWith("/dashboard/replies") ||
+      pathname.startsWith("/dashboard/contacts"),
   );
 
   const isActive = (href, exact = false) =>
-    exact ? pathname === href : pathname === href || pathname.startsWith(href + "/");
+    exact
+      ? pathname === href
+      : pathname === href || pathname.startsWith(href + "/");
 
   return (
     <>
@@ -39,7 +47,11 @@ const Aside = ({ sidebarOpen, onClose, collapsed }) => {
           className="flex items-center gap-2.5 h-16 px-4 border-b border-gray-100 shrink-0 overflow-hidden"
         >
           <span className="w-7 h-7 rounded-lg bg-red-600 flex items-center justify-center shrink-0">
-            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="w-4 h-4 text-white"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
             </svg>
           </span>
@@ -57,7 +69,6 @@ const Aside = ({ sidebarOpen, onClose, collapsed }) => {
 
         {/* Nav */}
         <nav className="flex-1 px-2 py-5 overflow-y-auto space-y-5">
-
           {/* ── প্রধান ── */}
           <div>
             {!collapsed && (
@@ -75,8 +86,16 @@ const Aside = ({ sidebarOpen, onClose, collapsed }) => {
                   ${collapsed ? "justify-center" : ""}
                 `}
               >
-                <span className={`shrink-0 ${isActive("/dashboard", true) ? "text-white" : "text-gray-400"}`}>
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <span
+                  className={`shrink-0 ${isActive("/dashboard", true) ? "text-white" : "text-gray-400"}`}
+                >
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
                     <rect x="3" y="3" width="7" height="7" rx="1" />
                     <rect x="14" y="3" width="7" height="7" rx="1" />
                     <rect x="3" y="14" width="7" height="7" rx="1" />
@@ -103,7 +122,6 @@ const Aside = ({ sidebarOpen, onClose, collapsed }) => {
               </p>
             )}
             <div className="space-y-0.5">
-
               {/* সব খবর — collapsible parent */}
               <button
                 onClick={() => {
@@ -115,10 +133,26 @@ const Aside = ({ sidebarOpen, onClose, collapsed }) => {
                   ${collapsed ? "justify-center" : ""}
                 `}
               >
-                <span className={`shrink-0 ${isActive("/dashboard/news") ? "text-white" : "text-gray-400"}`}>
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l6 6v8a2 2 0 01-2 2z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 2v6h6M9 12h6M9 16h4" />
+                <span
+                  className={`shrink-0 ${isActive("/dashboard/news") ? "text-white" : "text-gray-400"}`}
+                >
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l6 6v8a2 2 0 01-2 2z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M13 2v6h6M9 12h6M9 16h4"
+                    />
                   </svg>
                 </span>
                 {!collapsed && (
@@ -127,9 +161,16 @@ const Aside = ({ sidebarOpen, onClose, collapsed }) => {
                     {/* Chevron */}
                     <svg
                       className={`w-3.5 h-3.5 shrink-0 transition-transform duration-200 ${newsOpen ? "rotate-180" : ""} ${isActive("/dashboard/news") ? "text-white/70" : "text-gray-300"}`}
-                      fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2.5}
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M19 9l-7 7-7-7"
+                      />
                     </svg>
                   </>
                 )}
@@ -141,7 +182,6 @@ const Aside = ({ sidebarOpen, onClose, collapsed }) => {
                   className={`overflow-hidden transition-all duration-200 ${newsOpen ? "max-h-40 opacity-100" : "max-h-0 opacity-0"}`}
                 >
                   <div className="ml-3 pl-3 border-l border-gray-100 space-y-0.5 py-1">
-
                     {/* সব খবর দেখুন */}
                     <Link
                       href="/dashboard/news"
@@ -150,8 +190,18 @@ const Aside = ({ sidebarOpen, onClose, collapsed }) => {
                         ${pathname === "/dashboard/news" ? "bg-gray-100 text-black" : "text-gray-400 hover:text-black hover:bg-gray-50"}
                       `}
                     >
-                      <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h16M4 14h10" />
+                      <svg
+                        className="w-3.5 h-3.5 shrink-0"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M4 6h16M4 10h16M4 14h10"
+                        />
                       </svg>
                       তালিকা
                     </Link>
@@ -164,8 +214,18 @@ const Aside = ({ sidebarOpen, onClose, collapsed }) => {
                         ${pathname === "/dashboard/news/create" ? "bg-gray-100 text-black" : "text-gray-400 hover:text-black hover:bg-gray-50"}
                       `}
                     >
-                      <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                      <svg
+                        className="w-3.5 h-3.5 shrink-0"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M12 4v16m8-8H4"
+                        />
                       </svg>
                       নতুন খবর
                     </Link>
@@ -178,15 +238,24 @@ const Aside = ({ sidebarOpen, onClose, collapsed }) => {
                         ${pathname === "/dashboard/breaking-news" ? "bg-gray-100 text-black" : "text-gray-400 hover:text-black hover:bg-gray-50"}
                       `}
                     >
-                      <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 012-2h6M9 10h6m-6 4h6m5 0a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h14a2 2 0 002-2z" />
+                      <svg
+                        className="w-3.5 h-3.5 shrink-0"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M9 19v-6a2 2 0 012-2h6M9 10h6m-6 4h6m5 0a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h14a2 2 0 002-2z"
+                        />
                       </svg>
                       ব্রেকিং নিউজ
                     </Link>
                   </div>
                 </div>
               )}
-
             </div>
           </div>
 
@@ -208,9 +277,21 @@ const Aside = ({ sidebarOpen, onClose, collapsed }) => {
                   ${collapsed ? "justify-center" : ""}
                 `}
               >
-                <span className={`shrink-0 ${isActive("/dashboard/users") ? "text-white" : "text-gray-400"}`}>
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
+                <span
+                  className={`shrink-0 ${isActive("/dashboard/users") ? "text-white" : "text-gray-400"}`}
+                >
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"
+                    />
                   </svg>
                 </span>
                 {!collapsed && (
@@ -223,33 +304,118 @@ const Aside = ({ sidebarOpen, onClose, collapsed }) => {
                 )}
               </Link>
 
-              {/* মন্তব্য */}
-              <Link
-                href="/dashboard/comments"
-                onClick={onClose}
-                title={collapsed ? "মন্তব্য" : ""}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold transition-all duration-150
-                  ${isActive("/dashboard/comments") ? "bg-black text-white shadow-sm" : "text-gray-500 hover:bg-gray-50 hover:text-black"}
-                  ${collapsed ? "justify-center" : ""}
-                `}
-              >
-                <span className={`shrink-0 ${isActive("/dashboard/comments") ? "text-white" : "text-gray-400"}`}>
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72A7.965 7.965 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                  </svg>
-                </span>
+              {/* ── যোগাযোগ ও প্রতিক্রিয়া ── */}
+              <div>
                 {!collapsed && (
-                  <>
-                    <span className="truncate">মন্তব্য</span>
-                    {isActive("/dashboard/comments") && (
-                      <span className="ml-auto w-1.5 h-1.5 rounded-full bg-white opacity-70 shrink-0" />
-                    )}
-                  </>
+                  <p className="px-3 mb-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                    প্রতিক্রিয়া
+                  </p>
                 )}
-              </Link>
+                <div className="space-y-0.5">
+                  {/* Parent Toggle Button */}
+                  <button
+                    onClick={() => {
+                      if (!collapsed) setEngagementOpen((prev) => !prev);
+                    }}
+                    title={collapsed ? "যোগাযোগ ও প্রতিক্রিয়া" : ""}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold transition-all duration-150
+        ${
+          pathname.startsWith("/dashboard/comments") ||
+          pathname.startsWith("/dashboard/replies") ||
+          pathname.startsWith("/dashboard/contacts")
+            ? "bg-black text-white shadow-sm"
+            : "text-gray-500 hover:bg-gray-50 hover:text-black"
+        }
+        ${collapsed ? "justify-center" : ""}
+      `}
+                  >
+                    <span
+                      className={`shrink-0 ${pathname.startsWith("/dashboard/comments") || pathname.startsWith("/dashboard/replies") || pathname.startsWith("/dashboard/contacts") ? "text-white" : "text-gray-400"}`}
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72A7.965 7.965 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                        />
+                      </svg>
+                    </span>
+                    {!collapsed && (
+                      <>
+                        <span className="truncate flex-1 text-left">
+                          যোগাযোগ ও মন্তব্য
+                        </span>
+                        <svg
+                          className={`w-3.5 h-3.5 shrink-0 transition-transform duration-200 ${engagementOpen ? "rotate-180" : ""} ${pathname.startsWith("/dashboard/comments") || pathname.startsWith("/dashboard/replies") || pathname.startsWith("/dashboard/contacts") ? "text-white/70" : "text-gray-300"}`}
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2.5}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </>
+                    )}
+                  </button>
+
+                  {/* Sub-items */}
+                  {!collapsed && (
+                    <div
+                      className={`overflow-hidden transition-all duration-200 ${engagementOpen ? "max-h-48 opacity-100" : "max-h-0 opacity-0"}`}
+                    >
+                      <div className="ml-3 pl-3 border-l border-gray-100 space-y-0.5 py-1">
+                        {/* মন্তব্যসমূহ */}
+                        <Link
+                          href="/dashboard/comment"
+                          onClick={onClose}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-lg text-[12px] font-semibold transition-all
+              ${pathname === "/dashboard/comment" ? "bg-gray-100 text-black" : "text-gray-400 hover:text-black hover:bg-gray-50"}
+            `}
+                        >
+                          <div className="w-1.5 h-1.5 rounded-full bg-current opacity-40" />
+                          মন্তব্যসমূহ
+                        </Link>
+
+                        {/* উত্তর (Replies) */}
+                        <Link
+                          href="/dashboard/replay"
+                          onClick={onClose}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-lg text-[12px] font-semibold transition-all
+              ${pathname === "/dashboard/replay" ? "bg-gray-100 text-black" : "text-gray-400 hover:text-black hover:bg-gray-50"}
+            `}
+                        >
+                          <div className="w-1.5 h-1.5 rounded-full bg-current opacity-40" />
+                          মন্তব্যের উত্তর
+                        </Link>
+
+                        {/* কন্টাক্ট মেসেজ */}
+                        <Link
+                          href="/dashboard/contact"
+                          onClick={onClose}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-lg text-[12px] font-semibold transition-all
+              ${pathname === "/dashboard/contact" ? "bg-gray-100 text-black" : "text-gray-400 hover:text-black hover:bg-gray-50"}
+            `}
+                        >
+                          <div className="w-1.5 h-1.5 rounded-full bg-current opacity-40" />
+                          যোগাযোগ বার্তা
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
-
         </nav>
 
         {/* Footer */}

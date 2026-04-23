@@ -97,6 +97,112 @@ export async function POST(request) {
   }
 }
 
+// =======================
+// PATCH - Update Reply
+// =======================
+export async function PATCH(request) {
+  try {
+    const repliesCollection = await getReplies();
+
+    const { searchParams } = new URL(request.url);
+    const queryId = searchParams.get("id");
+
+    const body = await request.json().catch(() => ({}));
+    const id = queryId || body.id;
+    const requesterEmail = (body.email || "").trim().toLowerCase();
+
+    const { name, reply } = body;
+
+    const adminEmails = process.env.ADMIN_EMAILS
+      ? process.env.ADMIN_EMAILS.split(",").map((e) => e.trim().toLowerCase())
+      : ["admin@dailyjhalokathi.com"];
+
+    if (!id || !requesterEmail) {
+      return NextResponse.json(
+        { success: false, error: "ID এবং ইমেইল প্রয়োজন" },
+        { status: 400 }
+      );
+    }
+
+    const existingReply = await repliesCollection.findOne({
+      _id: new ObjectId(id),
+    });
+
+    if (!existingReply) {
+      return NextResponse.json(
+        { success: false, error: "রিপ্লাই পাওয়া যায়নি" },
+        { status: 404 }
+      );
+    }
+
+    const isAdmin = adminEmails.includes(requesterEmail);
+
+    // Permission check
+    if (existingReply.email !== requesterEmail && !isAdmin) {
+      return NextResponse.json(
+        { success: false, error: "আপনি এই রিপ্লাইটি আপডেট করতে পারবেন না" },
+        { status: 403 }
+      );
+    }
+
+    // Validation
+    let updateData = {};
+
+    if (name) {
+      if (name.trim().length < 2) {
+        return NextResponse.json(
+          { success: false, error: "নাম কমপক্ষে ২ অক্ষরের হতে হবে" },
+          { status: 400 }
+        );
+      }
+      updateData.name = name.trim();
+    }
+
+    if (reply) {
+      if (reply.trim().length < 5) {
+        return NextResponse.json(
+          { success: false, error: "রিপ্লাই কমপক্ষে ৫ অক্ষরের হতে হবে" },
+          { status: 400 }
+        );
+      }
+      updateData.reply = reply.trim();
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json(
+        { success: false, error: "Update করার জন্য data দিন" },
+        { status: 400 }
+      );
+    }
+
+    updateData.updatedAt = new Date();
+
+    const result = await repliesCollection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: updateData }
+    );
+
+    if (result.matchedCount === 0) {
+      return NextResponse.json(
+        { success: false, error: "কিছু সমস্যা হয়েছে" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json(
+      { success: true, message: "রিপ্লাই আপডেট হয়েছে" },
+      { status: 200 }
+    );
+  } catch (err) {
+    return NextResponse.json(
+      { success: false, error: err.message },
+      { status: 500 }
+    );
+  }
+}
+
+
+
 // DELETE - রিপ্লাই মুছুন (owner বা admin)
 export async function DELETE(request) {
   try {

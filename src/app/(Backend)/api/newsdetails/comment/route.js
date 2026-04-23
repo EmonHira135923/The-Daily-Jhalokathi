@@ -96,6 +96,90 @@ export async function POST(request) {
   }
 }
 
+export async function PATCH(request) {
+  try {
+    const commentsCollection = await getComments();
+    const repliesCollection = await getReplies();
+
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+    const type = searchParams.get("type"); // comment / reply
+
+    const body = await request.json();
+    const { name, comment } = body;
+
+    if (!id || !type) {
+      return NextResponse.json(
+        { success: false, error: "ID এবং type প্রয়োজন" },
+        { status: 400 }
+      );
+    }
+
+    if (!name && !comment) {
+      return NextResponse.json(
+        { success: false, error: "Update করার জন্য data দিন" },
+        { status: 400 }
+      );
+    }
+
+    let updateData = {};
+
+    if (name) {
+      if (name.trim().length < 2) {
+        return NextResponse.json(
+          { success: false, error: "নাম কমপক্ষে ২ অক্ষরের হতে হবে" },
+          { status: 400 }
+        );
+      }
+      updateData.name = name.trim();
+    }
+
+    if (comment) {
+      if (comment.trim().length < 5) {
+        return NextResponse.json(
+          { success: false, error: "মন্তব্য কমপক্ষে ৫ অক্ষরের হতে হবে" },
+          { status: 400 }
+        );
+      }
+      updateData.comment = comment.trim();
+    }
+
+    updateData.updatedAt = new Date();
+
+    let result;
+
+    if (type === "reply") {
+      result = await repliesCollection.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: updateData }
+      );
+    } else {
+      result = await commentsCollection.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: updateData }
+      );
+    }
+
+    if (result.matchedCount === 0) {
+      return NextResponse.json(
+        { success: false, error: "ডাটা পাওয়া যায়নি" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(
+      { success: true, message: "আপডেট সফল হয়েছে" },
+      { status: 200 }
+    );
+  } catch (err) {
+    return NextResponse.json(
+      { success: false, error: err.message },
+      { status: 500 }
+    );
+  }
+}
+
+
 // DELETE - কমেন্ট মুছুন (admin)
 export async function DELETE(request) {
   try {

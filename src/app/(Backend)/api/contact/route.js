@@ -68,3 +68,48 @@ export async function POST(request) {
     }, { status: 500 });
   }
 }
+
+// DELETE Message - অ্যাডমিন প্যানেল থেকে মেসেজ ডিলিট করার জন্য
+export async function DELETE(request) {
+  try {
+    const contactFormCollection = await getContactform();
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json(
+        { success: false, error: "ID required" },
+        { status: 400 }
+      );
+    }
+
+    let query = {};
+    try {
+      query._id = new ObjectId(id);
+    } catch (error) {
+      return NextResponse.json(
+        { success: false, error: "Invalid ID" },
+        { status: 400 }
+      );
+    }
+
+    const result = await contactFormCollection.deleteOne(query);
+
+    if (result.deletedCount === 0) {
+      return NextResponse.json(
+        { success: false, message: "Message not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "বার্তাটি সফলভাবে ডিলিট করা হয়েছে!",
+    });
+  } catch (err) {
+    return NextResponse.json(
+      { success: false, error: err.message },
+      { status: 500 }
+    );
+  }
+}
