@@ -1,17 +1,14 @@
-// lib/auth.js
-
 export const fetchUserProfile = async () => {
-  if (typeof window === "undefined") return { success: false };
-  const token = localStorage.getItem("accessToken");
-  if (!token) return { success: false };
-
   try {
+    const token = localStorage.getItem("accessToken");
+
     const res = await fetch("/api/auth/myprofile", {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      credentials: "include",
     });
+
     return await res.json();
   } catch (error) {
-    console.error("Profile Fetch Error:", error);
     return { success: false };
   }
 };
@@ -19,8 +16,9 @@ export const fetchUserProfile = async () => {
 export const logoutUser = async () => {
   try {
     await fetch("/api/auth/logout", { method: "POST" });
+    // ✅ localStorage থেকেও token মুছুন
     localStorage.removeItem("accessToken");
-    return true; // সফল হলে true রিটার্ন করবে
+    return true;
   } catch (error) {
     console.error("Logout Error:", error);
     return false;

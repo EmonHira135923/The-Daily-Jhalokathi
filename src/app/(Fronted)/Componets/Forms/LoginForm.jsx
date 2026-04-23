@@ -3,14 +3,12 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { fetchUserProfile } from "@/app/(Backend)/lib/auth";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  // react-hook-form initialization
   const {
     register,
     handleSubmit,
@@ -29,31 +27,36 @@ const LoginForm = () => {
       const result = await response.json();
 
       if (result.success) {
-        // ১. প্রথমে টোকেনটি সেভ করুন
-        localStorage.setItem("accessToken", result.result);
+        // ১. token localStorage এ save করুন
+        const token = result.result;
+        localStorage.setItem("accessToken", token);
 
-        // ২. এবার প্রোফাইল ডাটা ফেচ করুন রোল জানার জন্য
-        const profileData = await fetchUserProfile();
+        // ২. token সরাসরি header এ দিয়ে profile fetch করুন
+        const profileRes = await fetch("/api/auth/myprofile", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: "include",
+        });
+
+        const profileData = await profileRes.json();
 
         if (profileData.success) {
           toast.success("লগইন সফল হয়েছে!");
 
-          const userRole = profileData.result?.role; // আপনার fetchUserProfile অনুযায়ী result এর ভেতর ডাটা থাকে
+          const userRole = profileData.result?.role;
 
-          // ৩. রোলের ওপর ভিত্তি করে রিডাইরেক্ট
           if (userRole === "admin") {
             router.push("/dashboard");
           } else {
             router.push("/");
           }
 
-          // পেজ রিফ্রেশ যাতে নেভবার আপডেট হয়
           setTimeout(() => {
             router.refresh();
           }, 100);
         } else {
-          // যদি টোকেন পাওয়ার পরও প্রোফাইল না আসে
-          toast.error("ইউজার প্রোফাইল পাওয়া যায়নি");
+          toast.error("ইউজার প্রোফাইল পাওয়া যায়নি");
         }
       } else {
         toast.error(result.message || "ইমেইল বা পাসওয়ার্ড ভুল");
@@ -127,7 +130,6 @@ const LoginForm = () => {
           </button>
         </div>
 
-        {/* Login Button */}
         <button
           disabled={loading}
           type="submit"

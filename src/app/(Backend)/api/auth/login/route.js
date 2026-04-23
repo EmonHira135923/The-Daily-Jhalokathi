@@ -12,7 +12,7 @@ export async function POST(request) {
     if (!email || !password) {
       return Response.json(
         { success: false, message: "Missing required fields" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -20,7 +20,7 @@ export async function POST(request) {
     if (!user) {
       return Response.json(
         { success: false, message: "Invalid credentials" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -28,7 +28,7 @@ export async function POST(request) {
     if (!comparePassword) {
       return Response.json(
         { success: false, message: "Invalid credentials" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -41,19 +41,24 @@ export async function POST(request) {
     const accessToken = jwt.sign(payload, process.env.NEXTAUTH_SECRET, {
       expiresIn: "15m",
     });
+
     const refreshToken = jwt.sign(
       payload,
       process.env.NEXTAUTH_REFRESH_SECRET,
-      {
-        expiresIn: "7d",
-      },
+      { expiresIn: "7d" }
     );
 
-    // ✅ Fix: await cookies() before using set()
+    // ✅ await দিয়ে cookies set করুন
     const cookieStore = await cookies();
-    cookieStore.set({
-      name: "refreshToken",
-      value: refreshToken,
+
+    cookieStore.set("accessToken", accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 15 * 60,
+    });
+
+    cookieStore.set("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
@@ -66,7 +71,7 @@ export async function POST(request) {
         success: true,
         result: accessToken,
       },
-      { status: 200 },
+      { status: 200 }
     );
   } catch (error) {
     return Response.json(
@@ -75,7 +80,7 @@ export async function POST(request) {
         success: false,
         error: error.message,
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

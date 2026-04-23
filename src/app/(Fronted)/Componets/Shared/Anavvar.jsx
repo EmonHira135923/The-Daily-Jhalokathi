@@ -48,11 +48,14 @@ const Anavvar = ({ onMenuToggle, onCollapseToggle, collapsed }) => {
   const handleLogout = async () => {
     setLoggingOut(true);
     try {
-      await logoutUser();
-      setUser(null);
-      setShowDropdown(false);
-      toast.success("✅ সফলভাবে লগআউট হয়েছেন!");
-      redirectpage.push("/login");
+      const success = await logoutUser();
+      if (success) {
+        setUser(null); // ✅ user state clear
+        setShowDropdown(false);
+        toast.success("✅ সফলভাবে লগআউট হয়েছেন!");
+        redirectpage.push("/login");
+        redirectpage.refresh(); // ✅ page refresh
+      }
     } catch {
       toast.error("❌ লগআউট করতে সমস্যা হয়েছে");
     } finally {
@@ -75,8 +78,18 @@ const Anavvar = ({ onMenuToggle, onCollapseToggle, collapsed }) => {
           className="md:hidden p-2 rounded-xl text-gray-500 hover:bg-gray-100 active:scale-95 transition-all focus:outline-none"
           aria-label="মেনু খুলুন"
         >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
           </svg>
         </button>
 
@@ -84,23 +97,47 @@ const Anavvar = ({ onMenuToggle, onCollapseToggle, collapsed }) => {
         <button
           onClick={onCollapseToggle}
           className="hidden md:flex p-2 rounded-xl text-gray-400 hover:bg-gray-100 hover:text-gray-700 active:scale-95 transition-all focus:outline-none"
-          aria-label={collapsed ? "সাইডবার প্রসারিত করুন" : "সাইডবার সংকুচিত করুন"}
+          aria-label={
+            collapsed ? "সাইডবার প্রসারিত করুন" : "সাইডবার সংকুচিত করুন"
+          }
           title={collapsed ? "সাইডবার প্রসারিত করুন" : "সাইডবার সংকুচিত করুন"}
         >
           {collapsed ? (
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M13 5l7 7-7 7M5 5l7 7-7 7"
+              />
             </svg>
           ) : (
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
+              />
             </svg>
           )}
         </button>
 
         {/* Page Title */}
         <div>
-          <h2 className="text-[14px] sm:text-[15px] font-bold text-black leading-tight">{pageTitle}</h2>
+          <h2 className="text-[14px] sm:text-[15px] font-bold text-black leading-tight">
+            {pageTitle}
+          </h2>
           <p className="hidden sm:block text-[11px] text-gray-400 leading-none mt-0.5">
             {new Date().toLocaleDateString("bn-BD", {
               weekday: "long",
@@ -116,8 +153,18 @@ const Anavvar = ({ onMenuToggle, onCollapseToggle, collapsed }) => {
       <div className="flex items-center gap-2 sm:gap-3">
         {/* Search — hidden on smallest screens */}
         <div className="hidden sm:flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
-          <svg className="w-3.5 h-3.5 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z" />
+          <svg
+            className="w-3.5 h-3.5 text-gray-400 shrink-0"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z"
+            />
           </svg>
           <input
             type="text"

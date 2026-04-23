@@ -1,25 +1,35 @@
 import jwt from "jsonwebtoken";
 import { ObjectId } from "mongodb";
 import { getUsers } from "@/app/(Backend)/lib/dbConnect";
+import { cookies } from "next/headers";
 
 export async function GET(request) {
   try {
-    const authHeader = request.headers.get("authorization");
+    let token = null;
 
-    // ১. টোকেন চেক করা
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    // ১. প্রথমে Authorization header চেক করুন
+    const authHeader = request.headers.get("authorization");
+    if (authHeader?.startsWith("Bearer ")) {
+      token = authHeader.split(" ")[1];
+    }
+
+    // ২. header না থাকলে cookie থেকে নিন
+    if (!token) {
+      const cookieStore = await cookies();
+      token = cookieStore.get("accessToken")?.value;
+    }
+
+    // ৩. কোনোটাই না থাকলে Unauthorized
+    if (!token) {
       return Response.json(
         { success: false, message: "Unauthorized: No token provided" },
         { status: 401 }
       );
     }
 
-    const token = authHeader.split(" ")[1];
-
-    // ২. টোকেন ভেরিফাই করা
+    // ৪. token verify করুন
     let decoded;
     try {
-      // আপনার .env থেকে সিক্রেট কী ব্যবহার
       decoded = jwt.verify(token, process.env.NEXTAUTH_SECRET);
     } catch (err) {
       return Response.json(
@@ -28,14 +38,15 @@ export async function GET(request) {
       );
     }
 
-    // ৩. ডাটাবেস থেকে ইউজার খোঁজা
-    const userCollection = await getUsers();
-    
-    // সিকিউরিটি চেক: যদি decoded অবজেক্টে _id না থাকে
     if (!decoded?._id) {
-      return Response.json({ success: false, message: "Invalid token payload" }, { status: 400 });
+      return Response.json(
+        { success: false, message: "Invalid token payload" },
+        { status: 400 }
+      );
     }
 
+    // ৫. DB থেকে user আনুন
+    const userCollection = await getUsers();
     const user = await userCollection.findOne({
       _id: new ObjectId(decoded._id),
     });
@@ -47,14 +58,14 @@ export async function GET(request) {
       );
     }
 
-    // ৪. সেনসিটিভ ডাটা রিমুভ করা
+    // ৬. password বাদ দিয়ে পাঠান
     const { password, ...userWithoutPassword } = user;
 
     return Response.json(
       {
         message: "User profile fetched successfully",
         success: true,
-        result: userWithoutPassword, // পাসওয়ার্ড বাদে সব তথ্য পাঠানো হচ্ছে
+        result: userWithoutPassword,
       },
       { status: 200 }
     );

@@ -4,7 +4,8 @@ export async function POST() {
   try {
     const cookieStore = await cookies();
     
-    // কুকি থেকে refreshToken মুছে ফেলা
+    // ✅ দুটো cookie-ই delete করুন
+    cookieStore.delete("accessToken");
     cookieStore.delete("refreshToken");
 
     return Response.json(
