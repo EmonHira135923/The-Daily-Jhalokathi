@@ -28,7 +28,7 @@ export const metadata = {
   openGraph: {
     type: "website",
     locale: "bn_BD",
-    url: "https://your-domain.com/profile",
+    url: "https://the-daily-jhalokathi.vercel.app/profile",
 
     title: "My Profile | The Daily News",
 
@@ -37,7 +37,7 @@ export const metadata = {
 
     images: [
       {
-        url: "https://your-domain.com/og-profile.jpg",
+        url: "https://i.ibb.co.com/tpbdRHtr/Home.png",
         width: 1200,
         height: 630,
         alt: "My Profile The Daily News",
@@ -50,7 +50,7 @@ export const metadata = {
     title: "My Profile | The Daily News",
     description:
       "Manage your profile and account settings on The Daily News.",
-    images: ["https://your-domain.com/og-profile.jpg"],
+    images: ["https://i.ibb.co.com/tpbdRHtr/Home.png"],
   },
 };
 

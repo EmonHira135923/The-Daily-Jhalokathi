@@ -28,16 +28,16 @@ export const metadata = {
   openGraph: {
     type: "website",
     locale: "bn_BD",
-    url: "https://your-domain.com/health",
+    url: "https://the-daily-jhalokathi.vercel.app/health",
 
     title: "স্বাস্থ্য | Health | The Daily News",
 
     description:
-      "স্বাস্থ্য টিপস, চিকিৎসা তথ্য, ফিটনেস এবং লাইফস্টাইল আপডেট The Daily News এ পড়ুন। Latest health and medical news updates.",
+      "স্বাস্থ্য টিপস, চিকিৎসা তথ্য, ফিটনেস এবং লাইফস্টাইল আপডেট The Daily News এ পড়ুন। Latest health and medical news updates.",
 
     images: [
       {
-        url: "https://your-domain.com/og-health.jpg",
+        url: "https://i.ibb.co.com/tpbdRHtr/Home.png",
         width: 1200,
         height: 630,
         alt: "Health News - The Daily News",
@@ -50,7 +50,7 @@ export const metadata = {
     title: "স্বাস্থ্য | Health | The Daily News",
     description:
       "Latest health tips, medical news and wellness updates.",
-    images: ["https://your-domain.com/og-health.jpg"],
+    images: ["https://i.ibb.co.com/tpbdRHtr/Home.png"],
   },
 };
 

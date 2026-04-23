@@ -28,16 +28,16 @@ export const metadata = {
   openGraph: {
     type: "website",
     locale: "bn_BD",
-    url: "https://your-domain.com/economics",
+    url: "https://the-daily-jhalokathi.vercel.app/economics",
 
     title: "অর্থনীতি | Economics | The Daily News",
 
     description:
-      "বাংলাদেশ ও বিশ্বের অর্থনীতি, ব্যাংকিং, শেয়ার বাজার ও ব্যবসার সর্বশেষ খবর The Daily News এ পড়ুন। Latest economic and financial news updates.",
+      "বাংলাদেশ ও বিশ্বের অর্থনীতি, ব্যাংকিং, শেয়ার বাজার ও ব্যবসার সর্বশেষ খবর The Daily News এ পড়ুন। Latest economic and financial news updates.",
 
     images: [
       {
-        url: "https://your-domain.com/og-economics.jpg",
+        url: "https://i.ibb.co.com/tpbdRHtr/Home.png",
         width: 1200,
         height: 630,
         alt: "Economics News - The Daily News",
@@ -50,7 +50,7 @@ export const metadata = {
     title: "অর্থনীতি | Economics | The Daily News",
     description:
       "Latest economics, finance, stock market and business news updates.",
-    images: ["https://your-domain.com/og-economics.jpg"],
+    images: ["https://i.ibb.co.com/tpbdRHtr/Home.png"],
   },
 };
 

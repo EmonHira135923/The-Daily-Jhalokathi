@@ -28,16 +28,16 @@ export const metadata = {
   openGraph: {
     type: "website",
     locale: "bn_BD",
-    url: "https://your-domain.com/politics",
+    url: "https://the-daily-jhalokathi.vercel.app/politics",
 
     title: "রাজনীতি | Politics | The Daily News",
 
     description:
-      "বাংলাদেশ ও বিশ্বের রাজনৈতিক খবর, নির্বাচন আপডেট এবং সরকারি সিদ্ধান্তের সর্বশেষ সংবাদ The Daily News এ পড়ুন।",
+      "বাংলাদেশ ও বিশ্বের রাজনৈতিক খবর, নির্বাচন আপডেট এবং সরকারি সিদ্ধান্তের সর্বশেষ সংবাদ The Daily News এ পড়ুন।",
 
     images: [
       {
-        url: "https://your-domain.com/og-politics.jpg",
+        url: "https://i.ibb.co.com/tpbdRHtr/Home.png",
         width: 1200,
         height: 630,
         alt: "Politics News - The Daily News",
@@ -50,7 +50,7 @@ export const metadata = {
     title: "রাজনীতি | Politics | The Daily News",
     description:
       "Latest political news, election updates and government policies.",
-    images: ["https://your-domain.com/og-politics.jpg"],
+    images: ["https://i.ibb.co.com/tpbdRHtr/Home.png"],
   },
 };
 

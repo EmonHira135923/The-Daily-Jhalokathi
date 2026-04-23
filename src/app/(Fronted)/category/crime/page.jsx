@@ -28,16 +28,16 @@ export const metadata = {
   openGraph: {
     type: "website",
     locale: "bn_BD",
-    url: "https://your-domain.com/crime",
+    url: "https://the-daily-jhalokathi.vercel.app/crime",
 
     title: "অপরাধ | Crime | The Daily News",
 
     description:
-      "বাংলাদেশ ও বিশ্বের অপরাধ সংবাদ, পুলিশ রিপোর্ট, তদন্ত ও আইন-শৃঙ্খলা সংক্রান্ত সর্বশেষ খবর The Daily News এ পড়ুন।",
+      "বাংলাদেশ ও বিশ্বের অপরাধ সংবাদ, পুলিশ রিপোর্ট, তদন্ত ও আইন-শৃঙ্খলা সংক্রান্ত সর্বশেষ খবর The Daily News এ পড়ুন।",
 
     images: [
       {
-        url: "https://your-domain.com/og-crime.jpg",
+        url: "https://i.ibb.co.com/tpbdRHtr/Home.png",
         width: 1200,
         height: 630,
         alt: "Crime News - The Daily News",
@@ -50,7 +50,7 @@ export const metadata = {
     title: "অপরাধ | Crime | The Daily News",
     description:
       "Latest crime news, police reports and investigation updates.",
-    images: ["https://your-domain.com/og-crime.jpg"],
+    images: ["https://i.ibb.co.com/tpbdRHtr/Home.png"],
   },
 };
 

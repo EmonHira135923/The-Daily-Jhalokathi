@@ -28,16 +28,16 @@ export const metadata = {
   openGraph: {
     type: "website",
     locale: "bn_BD",
-    url: "https://your-domain.com/contact",
+    url: "https://the-daily-jhalokathi.vercel.app/contact",
 
     title: "যোগাযোগ | Contact | The Daily News",
 
     description:
-      "The Daily News এর সাথে যোগাযোগ করুন যেকোনো খবর, বিজ্ঞাপন বা সহায়তার জন্য। Contact us for support and inquiries.",
+      "The Daily News এর সাথে যোগাযোগ করুন যেকোনো খবর, বিজ্ঞাপন বা সহায়তার জন্য। Contact us for support and inquiries.",
 
     images: [
       {
-        url: "https://your-domain.com/og-contact.jpg",
+        url: "https://i.ibb.co.com/tpbdRHtr/Home.png",
         width: 1200,
         height: 630,
         alt: "Contact The Daily News",
@@ -50,7 +50,7 @@ export const metadata = {
     title: "যোগাযোগ | Contact | The Daily News",
     description:
       "Contact The Daily News for news tips, support, and business inquiries.",
-    images: ["https://your-domain.com/og-contact.jpg"],
+    images: ["https://i.ibb.co.com/tpbdRHtr/Home.png"],
   },
 };
 

@@ -28,16 +28,16 @@ export const metadata = {
   openGraph: {
     type: "website",
     locale: "bn_BD",
-    url: "https://your-domain.com/opinion",
+    url: "https://the-daily-jhalokathi.vercel.app/opinion",
 
     title: "মতামত | Opinion | The Daily News",
 
     description:
-      "বিশেষজ্ঞদের মতামত, সম্পাদকীয় ও সামাজিক ও রাজনৈতিক বিশ্লেষণ The Daily News এ পড়ুন। Expert opinions and editorial analysis.",
+      "বিশেষজ্ঞদের মতামত, সম্পাদকীয় ও সামাজিক ও রাজনৈতিক বিশ্লেষণ The Daily News এ পড়ুন। Expert opinions and editorial analysis.",
 
     images: [
       {
-        url: "https://your-domain.com/og-opinion.jpg",
+        url: "https://i.ibb.co.com/tpbdRHtr/Home.png",
         width: 1200,
         height: 630,
         alt: "Opinion - The Daily News",
@@ -50,7 +50,7 @@ export const metadata = {
     title: "মতামত | Opinion | The Daily News",
     description:
       "Expert opinions, editorials and deep analysis on current affairs.",
-    images: ["https://your-domain.com/og-opinion.jpg"],
+    images: ["https://i.ibb.co.com/tpbdRHtr/Home.png"],
   },
 };
 

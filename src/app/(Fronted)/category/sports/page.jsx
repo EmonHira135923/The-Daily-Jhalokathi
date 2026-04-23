@@ -29,16 +29,16 @@ export const metadata = {
   openGraph: {
     type: "website",
     locale: "bn_BD",
-    url: "https://your-domain.com/sports",
+    url: "https://the-daily-jhalokathi.vercel.app/sports",
 
     title: "খেলাধুলা | Sports | The Daily News",
 
     description:
-      "ক্রিকেট, ফুটবল সহ সকল খেলাধুলার লাইভ আপডেট, স্কোর এবং বিশ্লেষণ The Daily News এ পড়ুন। Latest sports news and live updates.",
+      "ক্রিকেট, ফুটবল সহ সকল খেলাধুলার লাইভ আপডেট, স্কোর এবং বিশ্লেষণ The Daily News এ পড়ুন। Latest sports news and live updates.",
 
     images: [
       {
-        url: "https://your-domain.com/og-sports.jpg",
+        url: "https://i.ibb.co.com/tpbdRHtr/Home.png",
         width: 1200,
         height: 630,
         alt: "Sports News - The Daily News",
@@ -51,7 +51,7 @@ export const metadata = {
     title: "খেলাধুলা | Sports | The Daily News",
     description:
       "Latest cricket, football and sports news with live updates and scores.",
-    images: ["https://your-domain.com/og-sports.jpg"],
+    images: ["https://i.ibb.co.com/tpbdRHtr/Home.png"],
   },
 };
 

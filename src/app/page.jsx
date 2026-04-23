@@ -23,7 +23,7 @@ export const metadata = {
   openGraph: {
     type: "website",
     locale: "bn_BD",
-    url: "https://your-domain.com",
+    url: "https://the-daily-jhalokathi.vercel.app",
 
     title: "দ্য ডেইলি নিউজ | The Daily News",
 
@@ -32,7 +32,7 @@ export const metadata = {
 
     images: [
       {
-        url: "https://your-domain.com/og-home.jpg",
+        url: "https://i.ibb.co.com/tpbdRHtr/Home.png",
         width: 1200,
         height: 630,
         alt: "The Daily News Home",
@@ -45,7 +45,7 @@ export const metadata = {
     title: "দ্য ডেইলি নিউজ | The Daily News",
     description:
       "Get latest breaking news from Bangladesh & world in Bangla and English.",
-    images: ["https://your-domain.com/og-home.jpg"],
+    images: ["https://i.ibb.co.com/tpbdRHtr/Home.png"],
   },
 };
 

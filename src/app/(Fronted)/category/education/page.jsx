@@ -29,16 +29,16 @@ export const metadata = {
   openGraph: {
     type: "website",
     locale: "bn_BD",
-    url: "https://your-domain.com/education",
+    url: "https://the-daily-jhalokathi.vercel.app/education",
 
     title: "শিক্ষা | Education | The Daily News",
 
     description:
-      "পরীক্ষার ফলাফল, ভর্তি তথ্য, চাকরির খবর এবং শিক্ষা সম্পর্কিত সকল আপডেট The Daily News এ পড়ুন। Latest education news and updates.",
+      "পরীক্ষার ফলাফল, ভর্তি তথ্য, চাকরির খবর এবং শিক্ষা সম্পর্কিত সকল আপডেট The Daily News এ পড়ুন। Latest education news and updates.",
 
     images: [
       {
-        url: "https://your-domain.com/og-education.jpg",
+        url: "https://i.ibb.co.com/tpbdRHtr/Home.png",
         width: 1200,
         height: 630,
         alt: "Education News - The Daily News",
@@ -51,7 +51,7 @@ export const metadata = {
     title: "শিক্ষা | Education | The Daily News",
     description:
       "Latest education news, exam results, admission and career updates.",
-    images: ["https://your-domain.com/og-education.jpg"],
+    images: ["https://i.ibb.co.com/tpbdRHtr/Home.png"],
   },
 };
 

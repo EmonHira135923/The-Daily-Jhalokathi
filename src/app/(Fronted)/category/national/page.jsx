@@ -28,16 +28,16 @@ export const metadata = {
   openGraph: {
     type: "website",
     locale: "bn_BD",
-    url: "https://your-domain.com/national",
+    url: "https://the-daily-jhalokathi.vercel.app/national",
 
     title: "জাতীয় | National | The Daily News",
 
     description:
-      "বাংলাদেশের জাতীয় খবর, সরকারি সিদ্ধান্ত, উন্নয়ন প্রকল্প ও প্রশাসনিক আপডেট The Daily News এ পড়ুন।",
+      "বাংলাদেশের জাতীয় খবর, সরকারি সিদ্ধান্ত, উন্নয়ন প্রকল্প ও প্রশাসনিক আপডেট The Daily News এ পড়ুন।",
 
     images: [
       {
-        url: "https://your-domain.com/og-national.jpg",
+        url: "https://i.ibb.co.com/tpbdRHtr/Home.png",
         width: 1200,
         height: 630,
         alt: "National News - The Daily News",
@@ -50,7 +50,7 @@ export const metadata = {
     title: "জাতীয় | National | The Daily News",
     description:
       "Latest Bangladesh national news, government updates and development news.",
-    images: ["https://your-domain.com/og-national.jpg"],
+    images: ["https://i.ibb.co.com/tpbdRHtr/Home.png"],
   },
 };
 

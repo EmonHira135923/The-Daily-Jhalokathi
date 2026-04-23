@@ -42,7 +42,7 @@ const categoryKeywords = categories.flatMap((c) => [
 
 // metadata
 export const metadata = {
-  metadataBase: new URL("https://your-domain.com"),
+  metadataBase: new URL("https://the-daily-jhalokathi.vercel.app"),
 
   title: {
     default: "দ্য ডেইলি নিউজ | The Daily News - সর্বশেষ সংবাদ",
@@ -79,7 +79,7 @@ export const metadata = {
   openGraph: {
     type: "website",
     locale: "bn_BD",
-    url: "https://your-domain.com",
+    url: "https://the-daily-jhalokathi.vercel.app",
     siteName: "The Daily News",
     title: "দ্য ডেইলি নিউজ | The Daily News",
     description:
@@ -87,7 +87,7 @@ export const metadata = {
 
     images: [
       {
-        url: "https://your-domain.com/og-image.jpg",
+        url: "https://i.ibb.co.com/tpbdRHtr/Home.png",
         width: 1200,
         height: 630,
         alt: "The Daily News",
@@ -100,7 +100,7 @@ export const metadata = {
     title: "দ্য ডেইলি নিউজ | The Daily News",
     description:
       "Latest breaking news from Bangladesh & world in Bangla and English.",
-    images: ["https://your-domain.com/og-image.jpg"],
+    images: ["https://i.ibb.co.com/tpbdRHtr/Home.png"],
   },
 
   robots: {

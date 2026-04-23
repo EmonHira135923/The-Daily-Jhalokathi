@@ -28,16 +28,16 @@ export const metadata = {
   openGraph: {
     type: "website",
     locale: "bn_BD",
-    url: "https://your-domain.com/entertainment",
+    url: "https://the-daily-jhalokathi.vercel.app/entertainment",
 
     title: "বিনোদন | Entertainment | The Daily News",
 
     description:
-      "সিনেমা, নাটক, গান, এবং সেলিব্রিটি খবরের সর্বশেষ আপডেট The Daily News এ পড়ুন। Latest entertainment news and celebrity updates.",
+      "সিনেমা, নাটক, গান, এবং সেলিব্রিটি খবরের সর্বশেষ আপডেট The Daily News এ পড়ুন। Latest entertainment news and celebrity updates.",
 
     images: [
       {
-        url: "https://your-domain.com/og-entertainment.jpg",
+        url: "https://i.ibb.co.com/tpbdRHtr/Home.png",
         width: 1200,
         height: 630,
         alt: "Entertainment News - The Daily News",
@@ -50,7 +50,7 @@ export const metadata = {
     title: "বিনোদন | Entertainment | The Daily News",
     description:
       "Latest movies, drama, music and celebrity entertainment news.",
-    images: ["https://your-domain.com/og-entertainment.jpg"],
+    images: ["https://i.ibb.co.com/tpbdRHtr/Home.png"],
   },
 };
 

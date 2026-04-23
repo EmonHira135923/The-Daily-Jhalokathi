@@ -29,7 +29,7 @@ export const metadata = {
   openGraph: {
     type: "website",
     locale: "bn_BD",
-    url: "https://your-domain.com/business",
+    url: "https://the-daily-jhalokathi.vercel.app/business",
 
     title: "বাণিজ্য | Business | The Daily News",
 
@@ -38,7 +38,7 @@ export const metadata = {
 
     images: [
       {
-        url: "https://your-domain.com/og-business.jpg",
+        url: "https://i.ibb.co.com/tpbdRHtr/Home.png",
         width: 1200,
         height: 630,
         alt: "Business News - The Daily News",
@@ -51,7 +51,7 @@ export const metadata = {
     title: "বাণিজ্য | Business | The Daily News",
     description:
       "Latest business news, startups, banking and investment updates.",
-    images: ["https://your-domain.com/og-business.jpg"],
+    images: ["https://i.ibb.co.com/tpbdRHtr/Home.png"],
   },
 };
 
