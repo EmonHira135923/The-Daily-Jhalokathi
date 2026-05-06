@@ -1,9 +1,25 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { AiOutlineDelete, AiOutlineEdit, AiOutlineCheck, AiOutlineClose } from "react-icons/ai";
 import { BiReply } from "react-icons/bi";
 import { toast } from "react-toastify";
+
+const getAccessToken = () =>
+  typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+
+const LoginPrompt = ({ compact = false }) => (
+  <div className={`${compact ? "mt-3 ml-4 p-4" : "p-6"} bg-white rounded-2xl border border-gray-100 shadow-sm`}>
+    <p className="text-sm font-semibold text-gray-800">Please login to comment or reply.</p>
+    <Link
+      href="/login"
+      className="mt-3 inline-flex items-center rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-700 transition-all"
+    >
+      Login
+    </Link>
+  </div>
+);
 
 // ─── Spinner ──────────────────────────────────────────────────────────────────
 const Spinner = ({ size = "sm" }) => (
@@ -63,22 +79,57 @@ const inputCls = (err) =>
 
 
 // ─── Comment Form ──────────────────────────────────────────────────────────────
-export const CommentForm = ({ newsId, onCommentAdded }) => {
+export const CommentForm = ({ newsId, onCommentAdded, currentUser, authLoading }) => {
   const [loading, setLoading] = useState(false);
-  const { register, handleSubmit, reset, formState: { errors } } = useForm();
+  const { register, handleSubmit, reset, formState: { errors } } = useForm({
+    defaultValues: {
+      name: currentUser?.name || "",
+      email: currentUser?.email || "",
+    },
+  });
+
+  useEffect(() => {
+    if (currentUser) {
+      reset({
+        name: currentUser.name || "",
+        email: currentUser.email || "",
+        comment: "",
+      });
+    }
+  }, [currentUser, reset]);
+
+  if (authLoading) {
+    return (
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <div className="h-5 w-40 bg-gray-100 rounded animate-pulse mb-4" />
+        <div className="h-24 bg-gray-50 rounded-xl animate-pulse" />
+      </div>
+    );
+  }
+
+  if (!currentUser) return <LoginPrompt />;
 
   const onSubmit = async (data) => {
     setLoading(true);
     try {
+      const token = getAccessToken();
       const res = await fetch("/api/newsdetails/comment", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({ ...data, newsId }),
       });
       const result = await res.json();
       if (result.success) {
         toast.success("✅ মন্তব্য সফলভাবে পাঠানো হয়েছে!", { position: "top-right", autoClose: 4000 });
-        reset();
+        reset({
+          name: currentUser.name || "",
+          email: currentUser.email || "",
+          comment: "",
+        });
         onCommentAdded?.();
       } else {
         toast.error(`❌ ${result.error || "কিছু একটা সমস্যা হয়েছে"}`, { position: "top-right", autoClose: 4000 });
@@ -151,22 +202,48 @@ export const CommentForm = ({ newsId, onCommentAdded }) => {
 
 
 // ─── Reply Form ────────────────────────────────────────────────────────────────
-export const ReplyForm = ({ commentId, newsId, onReplyAdded, onCancel }) => {
+export const ReplyForm = ({ commentId, newsId, onReplyAdded, onCancel, currentUser }) => {
   const [loading, setLoading] = useState(false);
-  const { register, handleSubmit, reset, formState: { errors } } = useForm();
+  const { register, handleSubmit, reset, formState: { errors } } = useForm({
+    defaultValues: {
+      name: currentUser?.name || "",
+      email: currentUser?.email || "",
+    },
+  });
+
+  useEffect(() => {
+    if (currentUser) {
+      reset({
+        name: currentUser.name || "",
+        email: currentUser.email || "",
+        reply: "",
+      });
+    }
+  }, [currentUser, reset]);
+
+  if (!currentUser) return <LoginPrompt compact />;
 
   const onSubmit = async (data) => {
     setLoading(true);
     try {
+      const token = getAccessToken();
       const res = await fetch("/api/newsdetails/replay", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({ ...data, commentId, newsId }),
       });
       const result = await res.json();
       if (result.success) {
         toast.success("✅ রিপ্লাই সফলভাবে পাঠানো হয়েছে!", { position: "top-right", autoClose: 4000 });
-        reset();
+        reset({
+          name: currentUser.name || "",
+          email: currentUser.email || "",
+          reply: "",
+        });
         onReplyAdded?.();
         onCancel?.();
       } else {
@@ -311,7 +388,7 @@ const DeleteModal = ({ dialogRef, pendingDelete, onConfirm, onCancel }) => (
 
 
 // ─── Reply Card ────────────────────────────────────────────────────────────────
-const ReplyCard = ({ reply, onDelete, onEdit }) => {
+const ReplyCard = ({ reply, onDelete, onEdit, canManage }) => {
   const [editing, setEditing] = useState(false);
   const [editLoading, setEditLoading] = useState(false);
 
@@ -348,7 +425,7 @@ const ReplyCard = ({ reply, onDelete, onEdit }) => {
               <span className="font-semibold text-xs text-gray-800 truncate">{reply.name}</span>
               <span className="text-[10px] text-gray-400 flex-shrink-0">{formatDate(reply.createdAt)}</span>
             </div>
-            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+            <div className={`${canManage ? "flex" : "hidden"} items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0`}>
               <button
                 onClick={() => setEditing(!editing)}
                 title="সম্পাদনা"
@@ -384,11 +461,20 @@ const ReplyCard = ({ reply, onDelete, onEdit }) => {
 
 
 // ─── Comment Card ──────────────────────────────────────────────────────────────
-const CommentCard = ({ comment, newsId, onDelete, onRefresh }) => {
+const CommentCard = ({ comment, newsId, onDelete, onRefresh, currentUser, canManage }) => {
   const [replyOpen, setReplyOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editLoading, setEditLoading] = useState(false);
   const [showReplies, setShowReplies] = useState(true);
+
+  const handleReplyToggle = () => {
+    if (!currentUser) {
+      toast.info("Please login to reply.", { position: "top-right", autoClose: 3000 });
+      return;
+    }
+
+    setReplyOpen((value) => !value);
+  };
 
   const handleSaveEdit = async (newText) => {
     setEditLoading(true);
@@ -426,7 +512,7 @@ const CommentCard = ({ comment, newsId, onDelete, onRefresh }) => {
               <h4 className="font-bold text-sm text-gray-900">{comment.name}</h4>
               <p className="text-[11px] text-gray-400">{formatDate(comment.createdAt)}</p>
             </div>
-            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+            <div className={`${canManage ? "flex" : "hidden"} items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0`}>
               <button
                 onClick={() => setEditing(!editing)}
                 title="সম্পাদনা করুন"
@@ -459,7 +545,7 @@ const CommentCard = ({ comment, newsId, onDelete, onRefresh }) => {
           {/* Actions */}
           <div className="mt-3 flex items-center gap-3 border-t border-gray-50 pt-2.5">
             <button
-              onClick={() => setReplyOpen(!replyOpen)}
+              onClick={handleReplyToggle}
               className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600 hover:text-emerald-700 transition-colors"
             >
               <BiReply className="w-4 h-4" />
@@ -484,6 +570,7 @@ const CommentCard = ({ comment, newsId, onDelete, onRefresh }) => {
           newsId={newsId}
           onReplyAdded={() => { onRefresh?.(); setReplyOpen(false); }}
           onCancel={() => setReplyOpen(false)}
+          currentUser={currentUser}
         />
       )}
 
@@ -496,6 +583,7 @@ const CommentCard = ({ comment, newsId, onDelete, onRefresh }) => {
               reply={reply}
               onDelete={(id) => onDelete("reply", id)}
               onEdit={onRefresh}
+              canManage={canManage}
             />
           ))}
         </div>
@@ -509,11 +597,33 @@ const CommentCard = ({ comment, newsId, onDelete, onRefresh }) => {
 const NewsDetailsCommentForm = ({ newsId }) => {
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [pendingDelete, setPendingDelete] = useState(null);
-  const [deletingId, setDeletingId] = useState(null);
   const dialogRef = useRef(null);
 
-  const fetchComments = async () => {
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const token = getAccessToken();
+        const res = await fetch("/api/auth/myprofile", {
+          credentials: "include",
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        const result = await res.json();
+        setCurrentUser(result.success ? result.result : null);
+      } catch {
+        setCurrentUser(null);
+      } finally {
+        setAuthLoading(false);
+      }
+    };
+
+    fetchCurrentUser();
+  }, []);
+
+  const fetchComments = useCallback(async () => {
+    setLoading(true);
     try {
       const res = await fetch(`/api/newsdetails/comment?newsId=${newsId}`);
       const result = await res.json();
@@ -536,9 +646,12 @@ const NewsDetailsCommentForm = ({ newsId }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [newsId]);
 
-  useEffect(() => { fetchComments(); }, [newsId]);
+  useEffect(() => {
+    const timer = setTimeout(fetchComments, 0);
+    return () => clearTimeout(timer);
+  }, [fetchComments]);
 
   const openDeleteModal = (type, id) => {
     setPendingDelete({ type, id });
@@ -554,7 +667,6 @@ const NewsDetailsCommentForm = ({ newsId }) => {
     if (!pendingDelete) return;
     const { type, id } = pendingDelete;
     closeDeleteModal();
-    setDeletingId(id);
 
     try {
       const endpoint = type === "comment"
@@ -574,15 +686,18 @@ const NewsDetailsCommentForm = ({ newsId }) => {
       }
     } catch {
       toast.error("❌ সার্ভারে সংযোগ করতে ব্যর্থ হয়েছে", { position: "top-right", autoClose: 3000 });
-    } finally {
-      setDeletingId(null);
     }
   };
 
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
       {/* Post Comment */}
-      <CommentForm newsId={newsId} onCommentAdded={fetchComments} />
+      <CommentForm
+        newsId={newsId}
+        onCommentAdded={fetchComments}
+        currentUser={currentUser}
+        authLoading={authLoading}
+      />
 
       {/* Comments List */}
       <div>
@@ -620,6 +735,8 @@ const NewsDetailsCommentForm = ({ newsId }) => {
                 newsId={newsId}
                 onDelete={openDeleteModal}
                 onRefresh={fetchComments}
+                currentUser={currentUser}
+                canManage={currentUser?.role === "admin"}
               />
             ))}
           </div>

@@ -1,9 +1,13 @@
 import { getUsers } from "@/app/(Backend)/lib/dbConnect";
+import { requireAdmin } from "@/app/(Backend)/middlewares/adminMiddleware";
 import bcrypt from "bcrypt";
 
 // Get Method
 export async function GET(request) {
   try {
+    const admin = await requireAdmin(request);
+    if (!admin.success) return admin.response;
+
     // 1. You MUST await the collection/connection
     const userCollection = await getUsers();
 

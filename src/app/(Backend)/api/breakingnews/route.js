@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getBreakingNews } from "../../lib/dbConnect";
+import { requireAdmin } from "@/app/(Backend)/middlewares/adminMiddleware";
 
 // ─────────────────────────────────────────────
 // GET → সব Breaking News দেখাবে (latest first)
@@ -51,6 +52,9 @@ export async function GET() {
 // ─────────────────────────────────────────────
 export async function POST(request) {
   try {
+    const admin = await requireAdmin(request);
+    if (!admin.success) return admin.response;
+
     const collection = await getBreakingNews();
     const { title } = await request.json();
 

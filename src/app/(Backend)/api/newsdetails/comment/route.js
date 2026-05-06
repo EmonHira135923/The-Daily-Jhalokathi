@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getComments, getReplies } from "@/app/(Backend)/lib/dbConnect";
 import { ObjectId } from "mongodb";
+import { requireAdmin } from "@/app/(Backend)/middlewares/adminMiddleware";
+import { requireAuth } from "@/app/(Backend)/middlewares/authMiddleware";
 
 // GET - সব কমেন্ট অথবা নির্দিষ্ট newsId এর কমেন্ট
 export async function GET(request) {
@@ -10,13 +12,21 @@ export async function GET(request) {
     const id = searchParams.get("id");
     const newsId = searchParams.get("newsId");
 
+    if (!newsId) {
+      const admin = await requireAdmin(request);
+      if (!admin.success) return admin.response;
+    }
+
     let query = {};
 
     if (id) {
       try {
         query._id = new ObjectId(id);
       } catch {
-        return NextResponse.json({ success: false, error: "Invalid ID" }, { status: 400 });
+        return NextResponse.json(
+          { success: false, error: "Invalid ID" },
+          { status: 400 },
+        );
       }
     }
 
@@ -36,39 +46,49 @@ export async function GET(request) {
       _id: item._id.toString(),
     }));
 
-    return NextResponse.json({ success: true, data: normalizedResult }, { status: 200 });
+    return NextResponse.json(
+      { success: true, data: normalizedResult },
+      { status: 200 },
+    );
   } catch (err) {
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: err.message },
+      { status: 500 },
+    );
   }
 }
 
 // POST - নতুন কমেন্ট যোগ করুন
 export async function POST(request) {
   try {
+    const auth = await requireAuth(request);
+    if (!auth.success) return auth.response;
+
     const commentsCollection = await getComments();
     const body = await request.json();
 
-    const { name, email, comment, newsId } = body;
+    const { name, comment, newsId } = body;
+    const email = auth.user?.email?.trim().toLowerCase();
 
     // Validation
     if (!name || !email || !comment || !newsId) {
       return NextResponse.json(
         { success: false, error: "সব ঘর পূরণ করুন" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (name.trim().length < 2) {
       return NextResponse.json(
         { success: false, error: "নাম কমপক্ষে ২ অক্ষরের হতে হবে" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (comment.trim().length < 5) {
       return NextResponse.json(
         { success: false, error: "মন্তব্য কমপক্ষে ৫ অক্ষরের হতে হবে" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -89,15 +109,21 @@ export async function POST(request) {
         message: "মন্তব্য সফলভাবে পাঠানো হয়েছে",
         data: { ...newComment, id: result.insertedId.toString() },
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (err) {
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: err.message },
+      { status: 500 },
+    );
   }
 }
 
 export async function PATCH(request) {
   try {
+    const admin = await requireAdmin(request);
+    if (!admin.success) return admin.response;
+
     const commentsCollection = await getComments();
     const repliesCollection = await getReplies();
 
@@ -111,14 +137,14 @@ export async function PATCH(request) {
     if (!id || !type) {
       return NextResponse.json(
         { success: false, error: "ID এবং type প্রয়োজন" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!name && !comment) {
       return NextResponse.json(
         { success: false, error: "Update করার জন্য data দিন" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -128,7 +154,7 @@ export async function PATCH(request) {
       if (name.trim().length < 2) {
         return NextResponse.json(
           { success: false, error: "নাম কমপক্ষে ২ অক্ষরের হতে হবে" },
-          { status: 400 }
+          { status: 400 },
         );
       }
       updateData.name = name.trim();
@@ -138,7 +164,7 @@ export async function PATCH(request) {
       if (comment.trim().length < 5) {
         return NextResponse.json(
           { success: false, error: "মন্তব্য কমপক্ষে ৫ অক্ষরের হতে হবে" },
-          { status: 400 }
+          { status: 400 },
         );
       }
       updateData.comment = comment.trim();
@@ -151,54 +177,70 @@ export async function PATCH(request) {
     if (type === "reply") {
       result = await repliesCollection.updateOne(
         { _id: new ObjectId(id) },
-        { $set: updateData }
+        { $set: updateData },
       );
     } else {
       result = await commentsCollection.updateOne(
         { _id: new ObjectId(id) },
-        { $set: updateData }
+        { $set: updateData },
       );
     }
 
     if (result.matchedCount === 0) {
       return NextResponse.json(
         { success: false, error: "ডাটা পাওয়া যায়নি" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     return NextResponse.json(
       { success: true, message: "আপডেট সফল হয়েছে" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (err) {
     return NextResponse.json(
       { success: false, error: err.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
-
 // DELETE - কমেন্ট মুছুন (admin)
 export async function DELETE(request) {
   try {
+    const admin = await requireAdmin(request);
+    if (!admin.success) return admin.response;
+
     const commentsCollection = await getComments();
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 
     if (!id) {
-      return NextResponse.json({ success: false, error: "ID প্রয়োজন" }, { status: 400 });
+      return NextResponse.json(
+        { success: false, error: "ID প্রয়োজন" },
+        { status: 400 },
+      );
     }
 
-    const result = await commentsCollection.deleteOne({ _id: new ObjectId(id) });
+    const result = await commentsCollection.deleteOne({
+      _id: new ObjectId(id),
+    });
 
     if (result.deletedCount === 0) {
-      return NextResponse.json({ success: false, error: "কমেন্ট পাওয়া যায়নি" }, { status: 404 });
+      return NextResponse.json(
+        { success: false, error: "কমেন্ট পাওয়া যায়নি" },
+        { status: 404 },
+      );
     }
 
-    return NextResponse.json({ success: true, message: "কমেন্ট মুছে ফেলা হয়েছে" }, { status: 200 });
+    return NextResponse.json(
+      { success: true, message: "কমেন্ট মুছে ফেলা হয়েছে" },
+      { status: 200 },
+    );
   } catch (err) {
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: err.message },
+      { status: 500 },
+    );
   }
 }

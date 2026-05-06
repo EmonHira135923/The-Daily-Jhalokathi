@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import { ObjectId } from "mongodb"; // এটি প্রয়োজন ID হ্যান্ডেল করতে
 import { getUsers } from "@/app/(Backend)/lib/dbConnect";
+import { requireAuth } from "@/app/(Backend)/middlewares/authMiddleware";
 
 // ক্লাউডিনারি কনফিগারেশন
 cloudinary.config({
@@ -12,11 +13,22 @@ cloudinary.config({
 
 export async function PATCH(req) {
   try {
+    const auth = await requireAuth(req);
+    if (!auth.success) return auth.response;
+
     const body = await req.json();
     const { userId, phone, image, imagePublicId } = body;
 
     if (!userId) {
       return NextResponse.json({ success: false, message: "ইউজার আইডি প্রয়োজন" }, { status: 400 });
+    }
+
+    const tokenUserId = String(auth.user?._id || auth.user?.id || "");
+    if (auth.user?.role !== "admin" && String(userId) !== tokenUserId) {
+      return NextResponse.json(
+        { success: false, message: "Forbidden: You can update only your own profile" },
+        { status: 403 },
+      );
     }
 
     const usersCollection = await getUsers();

@@ -1,8 +1,12 @@
 import { getUsers } from "@/app/(Backend)/lib/dbConnect";
+import { requireAdmin } from "@/app/(Backend)/middlewares/adminMiddleware";
 import { ObjectId } from "mongodb";
 
 export async function PATCH(request) {
   try {
+    const admin = await requireAdmin(request);
+    if (!admin.success) return admin.response;
+
     const { userId, role } = await request.json(); // শুধু রোল রিসিভ করবে
 
     if (!userId || !role) {
@@ -10,7 +14,7 @@ export async function PATCH(request) {
     }
 
     const userCollection = await getUsers();
-    const result = await userCollection.updateOne(
+    await userCollection.updateOne(
       { _id: new ObjectId(userId) },
       { $set: { role, updated_at: new Date() } }
     );

@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getReplies } from "@/app/(Backend)/lib/dbConnect";
 import { ObjectId } from "mongodb";
+import { requireAdmin } from "@/app/(Backend)/middlewares/adminMiddleware";
+import { requireAuth } from "@/app/(Backend)/middlewares/authMiddleware";
 
 // GET - সব রিপ্লাই অথবা নির্দিষ্ট commentId এর রিপ্লাই
 export async function GET(request) {
@@ -9,6 +11,11 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
     const commentId = searchParams.get("commentId");
+
+    if (!commentId) {
+      const admin = await requireAdmin(request);
+      if (!admin.success) return admin.response;
+    }
 
     let query = {};
 
@@ -45,10 +52,14 @@ export async function GET(request) {
 // POST - নতুন রিপ্লাই যোগ করুন
 export async function POST(request) {
   try {
+    const auth = await requireAuth(request);
+    if (!auth.success) return auth.response;
+
     const repliesCollection = await getReplies();
     const body = await request.json();
 
-    const { name, email, reply, commentId, newsId } = body;
+    const { name, reply, commentId, newsId } = body;
+    const email = auth.user?.email?.trim().toLowerCase();
 
     // Validation
     if (!name || !email || !reply || !commentId || !newsId) {
@@ -102,6 +113,9 @@ export async function POST(request) {
 // =======================
 export async function PATCH(request) {
   try {
+    const admin = await requireAdmin(request);
+    if (!admin.success) return admin.response;
+
     const repliesCollection = await getReplies();
 
     const { searchParams } = new URL(request.url);
@@ -109,7 +123,7 @@ export async function PATCH(request) {
 
     const body = await request.json().catch(() => ({}));
     const id = queryId || body.id;
-    const requesterEmail = (body.email || "").trim().toLowerCase();
+    const requesterEmail = (admin.user?.email || body.email || "").trim().toLowerCase();
 
     const { name, reply } = body;
 
@@ -135,7 +149,7 @@ export async function PATCH(request) {
       );
     }
 
-    const isAdmin = adminEmails.includes(requesterEmail);
+    const isAdmin = admin.user?.role === "admin" || adminEmails.includes(requesterEmail);
 
     // Permission check
     if (existingReply.email !== requesterEmail && !isAdmin) {
@@ -206,12 +220,15 @@ export async function PATCH(request) {
 // DELETE - রিপ্লাই মুছুন (owner বা admin)
 export async function DELETE(request) {
   try {
+    const admin = await requireAdmin(request);
+    if (!admin.success) return admin.response;
+
     const repliesCollection = await getReplies();
     const { searchParams } = new URL(request.url);
     const queryId = searchParams.get("id");
     const body = await request.json().catch(() => ({}));
     const id = queryId || body.id;
-    const requesterEmail = (body.email || "").trim().toLowerCase();
+    const requesterEmail = (admin.user?.email || body.email || "").trim().toLowerCase();
     const adminEmails = process.env.ADMIN_EMAILS
       ? process.env.ADMIN_EMAILS.split(",").map((email) => email.trim().toLowerCase())
       : ["admin@dailyjhalokathi.com"];
@@ -228,7 +245,7 @@ export async function DELETE(request) {
       return NextResponse.json({ success: false, error: "রিপ্লাই পাওয়া যায়নি" }, { status: 404 });
     }
 
-    const isAdmin = adminEmails.includes(requesterEmail);
+    const isAdmin = admin.user?.role === "admin" || adminEmails.includes(requesterEmail);
     if (reply.email !== requesterEmail && !isAdmin) {
       return NextResponse.json(
         { success: false, error: "আপনি এই রিপ্লাইটি মুছতে পারবেন না" },

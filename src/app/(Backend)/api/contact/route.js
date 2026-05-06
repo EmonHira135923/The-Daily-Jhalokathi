@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getContactform } from "../../lib/dbConnect";
+import { requireAdmin } from "@/app/(Backend)/middlewares/adminMiddleware";
 
 // GET All Messages - অ্যাডমিন প্যানেলের জন্য
 export async function GET(request) {
   try {
+    const admin = await requireAdmin(request);
+    if (!admin.success) return admin.response;
+
     const contactFormCollection = await getContactform();
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
@@ -72,6 +76,9 @@ export async function POST(request) {
 // DELETE Message - অ্যাডমিন প্যানেল থেকে মেসেজ ডিলিট করার জন্য
 export async function DELETE(request) {
   try {
+    const admin = await requireAdmin(request);
+    if (!admin.success) return admin.response;
+
     const contactFormCollection = await getContactform();
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");

@@ -45,7 +45,7 @@ export async function proxy(request) {
     response.headers.set('x-user-role', user.role);
     return response;
 
-  } catch (error) {
+  } catch {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 }

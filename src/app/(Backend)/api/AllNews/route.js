@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getNews } from "../../lib/dbConnect";
 import { v2 as cloudinary } from "cloudinary";
+import { requireAdmin } from "@/app/(Backend)/middlewares/adminMiddleware";
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -41,6 +42,9 @@ export async function GET(request) {
 // ২. POST: নতুন খবর যোগ করার জন্য
 export async function POST(request) {
   try {
+    const admin = await requireAdmin(request);
+    if (!admin.success) return admin.response;
+
     const newsCollection = await getNews();
     const data = await request.json();
 
@@ -85,6 +89,9 @@ export async function POST(request) {
 // ৩. PATCH: আপডেট করার জন্য
 export async function PATCH(request) {
   try {
+    const admin = await requireAdmin(request);
+    if (!admin.success) return admin.response;
+
     const newsCollection = await getNews();
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
@@ -93,7 +100,7 @@ export async function PATCH(request) {
     if (!id) return NextResponse.json({ success: false, message: "ID প্রয়োজন" }, { status: 400 });
 
     const { _id, ...updateData } = data;
-    const result = await newsCollection.updateOne(
+    await newsCollection.updateOne(
       { _id: new ObjectId(id) },
       { $set: { ...updateData, updatedAt: new Date() } }
     );
@@ -107,6 +114,9 @@ export async function PATCH(request) {
 // ৪. DELETE: ডিলিট করার জন্য
 export async function DELETE(request) {
   try {
+    const admin = await requireAdmin(request);
+    if (!admin.success) return admin.response;
+
     const newsCollection = await getNews();
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
