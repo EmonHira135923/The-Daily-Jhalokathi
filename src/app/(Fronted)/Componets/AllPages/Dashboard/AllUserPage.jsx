@@ -137,8 +137,11 @@ const AllUserPage = () => {
   }, []);
 
   useEffect(() => {
-    fetchMyProfile();
-    getAllUsers();
+    const timer = setTimeout(() => {
+      fetchMyProfile();
+      getAllUsers();
+    }, 0);
+    return () => clearTimeout(timer);
   }, [fetchMyProfile, getAllUsers]);
 
   const handlePageChange = (page) => {

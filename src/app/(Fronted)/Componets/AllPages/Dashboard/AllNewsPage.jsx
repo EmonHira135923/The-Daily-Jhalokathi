@@ -276,7 +276,8 @@ const AllNewsPage = () => {
   }, []);
 
   useEffect(() => {
-    fetchNews();
+    const timer = setTimeout(fetchNews, 0);
+    return () => clearTimeout(timer);
   }, [fetchNews]);
 
   // ── Position আপডেট ──
@@ -491,7 +492,7 @@ const AllNewsPage = () => {
                         {hasQuote ? (
                           <div className="max-w-[180px]">
                             <p className="text-[11px] text-indigo-700 italic line-clamp-2 leading-relaxed">
-                              "{news.quote.text}"
+                              &quot;{news.quote.text}&quot;
                             </p>
                             {news.quote.author && (
                               <p className="text-[10px] text-gray-400 mt-1 font-medium">
@@ -676,7 +677,7 @@ const AllNewsPage = () => {
             </div>
             <h3 className="font-bold text-lg text-red-600">আপনি কি নিশ্চিত?</h3>
             <p className="mt-2 text-sm text-gray-600 leading-relaxed">
-              <b>"{newsToDelete?.title}"</b> খবরটি মুছে ফেলতে চান?
+              <b>&quot;{newsToDelete?.title}&quot;</b> খবরটি মুছে ফেলতে চান?
               <br />
               <span className="text-xs text-gray-400">এটি আর ফিরে পাওয়া যাবে না।</span>
             </p>

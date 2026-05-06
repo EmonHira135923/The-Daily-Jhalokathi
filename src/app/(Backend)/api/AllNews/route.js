@@ -13,6 +13,9 @@ cloudinary.config({
 // ১. GET: সব খবর পড়ার জন্য
 export async function GET(request) {
   try {
+    const admin = await requireAdmin(request);
+    if (!admin.success) return admin.response;
+
     const newsCollection = await getNews();
     const { searchParams } = new URL(request.url);
     const slug = searchParams.get("slug");
@@ -20,7 +23,15 @@ export async function GET(request) {
 
     let query = {};
     if (slug) query.slug = slug.trim().toLowerCase();
-    if (id) query._id = new ObjectId(id);
+    if (id) {
+      if (!ObjectId.isValid(id)) {
+        return NextResponse.json(
+          { success: false, message: "Invalid news id" },
+          { status: 400 },
+        );
+      }
+      query._id = new ObjectId(id);
+    }
 
     const result = await newsCollection.find(query).sort({ createdAt: -1 }).toArray();
 

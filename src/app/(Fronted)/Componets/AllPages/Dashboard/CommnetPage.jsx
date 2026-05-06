@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useCallback, useState, useEffect, useRef } from "react";
 import { AiOutlineDelete } from "react-icons/ai";
 
 // ─── Delete Confirm Modal ─────────────────────────────────────────────────────
@@ -67,7 +67,7 @@ const CommentPage = () => {
   const dialogRef = useRef(null);
 
   // Fetch all comments (no newsId filter = admin view)
-  const fetchComments = async () => {
+  const fetchComments = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch("/api/newsdetails/comment");
@@ -80,11 +80,12 @@ const CommentPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchComments();
-  }, []);
+    const timer = setTimeout(fetchComments, 0);
+    return () => clearTimeout(timer);
+  }, [fetchComments]);
 
   const openDeleteModal = (id) => {
     setPendingId(id);

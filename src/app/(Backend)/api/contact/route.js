@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getContactform } from "../../lib/dbConnect";
 import { requireAdmin } from "@/app/(Backend)/middlewares/adminMiddleware";
+import { requireAuth } from "@/app/(Backend)/middlewares/authMiddleware";
 
 // GET All Messages - অ্যাডমিন প্যানেলের জন্য
 export async function GET(request) {
@@ -41,11 +42,18 @@ export async function GET(request) {
 // POST Message - কন্টাক্ট ফরম থেকে ডেটা সেভ করার জন্য
 export async function POST(request) {
   try {
+    const auth = await requireAuth(request);
+    if (!auth.success) return auth.response;
+
     const contactFormCollection = await getContactform();
-    const { name, email, subject, message } = await request.json();
+    const { name, subject, message } = await request.json();
+    const email = auth.user?.email?.trim().toLowerCase();
+    const normalizedName = typeof name === "string" ? name.trim() : "";
+    const normalizedSubject = typeof subject === "string" ? subject.trim() : "";
+    const normalizedMessage = typeof message === "string" ? message.trim() : "";
 
     // ভ্যালিডেশন
-    if (!name || !email || !message) {
+    if (!normalizedName || !email || !normalizedMessage) {
       return NextResponse.json({
         success: false,
         message: "নাম, ইমেইল এবং বার্তা থাকা বাধ্যতামূলক।",
@@ -53,10 +61,10 @@ export async function POST(request) {
     }
 
     const result = await contactFormCollection.insertOne({
-      name,
+      name: normalizedName,
       email,
-      subject: subject || "No Subject",
-      message,
+      subject: normalizedSubject || "No Subject",
+      message: normalizedMessage,
       createdAt: new Date(),
     });
 

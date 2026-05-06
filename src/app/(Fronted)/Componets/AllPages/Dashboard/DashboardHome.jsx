@@ -129,19 +129,19 @@ const Section = ({ title, icon, href, linkLabel, loading, children }) => (
 );
 
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
+const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return "শুভ সকাল";
+  if (hour < 17) return "শুভ দুপুর";
+  return "শুভ সন্ধ্যা";
+};
+
 const DashboardHome = () => {
-  const [greeting, setGreeting] = useState("শুভেচ্ছা");
+  const [greeting] = useState(getGreeting);
   const [stats, setStats] = useState({ news: 0, users: 0, comments: 0, replies: 0, contacts: 0 });
   const [recentNews, setRecentNews] = useState([]);
   const [recentComments, setRecentComments] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const hour = new Date().getHours();
-    if (hour < 12) setGreeting("শুভ সকাল");
-    else if (hour < 17) setGreeting("শুভ দুপুর");
-    else setGreeting("শুভ সন্ধ্যা");
-  }, []);
 
   useEffect(() => {
     const fetchAll = async () => {

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useCallback, useState, useEffect, useRef } from "react";
 import { AiOutlineDelete, AiOutlineMail, AiOutlineUser } from "react-icons/ai";
 import { MdOutlineSubject, MdOutlineMessage } from "react-icons/md";
 
@@ -151,7 +151,7 @@ const AllContactPage = () => {
   const [pendingId, setPendingId] = useState(null);
   const dialogRef = useRef(null);
 
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch("/api/contact");
@@ -164,11 +164,12 @@ const AllContactPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchMessages();
-  }, []);
+    const timer = setTimeout(fetchMessages, 0);
+    return () => clearTimeout(timer);
+  }, [fetchMessages]);
 
   const openDeleteModal = (id) => {
     setPendingId(id);

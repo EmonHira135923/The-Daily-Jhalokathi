@@ -131,8 +131,8 @@ const HomeNewsGrid = () => {
     const fetchAllData = async () => {
       try {
         const [newsRes, breakingRes] = await Promise.all([
-          fetch("/api/AllNews"),
-          fetch("/api/breakingnews"),
+          fetch("/api/public/AllNews"),
+          fetch("/api/public/breakingnews"),
         ]);
 
         const newsJson = await newsRes.json();
@@ -256,7 +256,7 @@ const HomeNewsGrid = () => {
               </p>
               <div className="flex items-center gap-2 text-white/50 text-xs border-t border-white/10 pt-3">
                 <ClockIcon />
-                <span>{featuredItem.time || featuredItem.date}</span>
+                <span>{featuredItem.time || featuredItem.date || featuredItem.formattedDate}</span>
               </div>
             </div>
           </Link>
@@ -293,7 +293,7 @@ const HomeNewsGrid = () => {
                   </div>
                   <div className="flex items-center gap-1.5 text-[11px] text-gray-400 font-medium">
                     <ClockIcon />
-                    <span>{news.time || news.date}</span>
+                    <span>{news.time || news.date || news.formattedDate}</span>
                   </div>
                 </div>
               </Link>
@@ -368,7 +368,7 @@ const HomeNewsGrid = () => {
                 <div className="mt-4 flex items-center justify-between border-t border-gray-50 pt-3">
                   <div className="flex items-center gap-1.5 text-[11px] text-gray-400 font-medium">
                     <ClockIcon />
-                    <span>{item.time || item.date}</span>
+                    <span>{item.time || item.date || item.formattedDate}</span>
                   </div>
                   <span className="text-[11px] font-bold text-red-600 opacity-0 group-hover:opacity-100 transition-opacity">
                     আরও পড়ুন →

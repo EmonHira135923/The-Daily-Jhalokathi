@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useCallback, useState, useEffect, useRef } from "react";
 import { AiOutlineDelete } from "react-icons/ai";
 
 // ─── Delete Confirm Modal ─────────────────────────────────────────────────────
@@ -70,7 +70,7 @@ const ReplayPage = () => {
   const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL || "admin@dailyjhalokathi.com";
 
   // Fetch all replies (no commentId filter = admin view, সব রিপ্লাই)
-  const fetchReplies = async () => {
+  const fetchReplies = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch("/api/newsdetails/replay");
@@ -83,11 +83,12 @@ const ReplayPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchReplies();
-  }, []);
+    const timer = setTimeout(fetchReplies, 0);
+    return () => clearTimeout(timer);
+  }, [fetchReplies]);
 
   const openDeleteModal = (id) => {
     setPendingId(id);

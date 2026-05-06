@@ -6,8 +6,11 @@ import { requireAdmin } from "@/app/(Backend)/middlewares/adminMiddleware";
 // GET → সব Breaking News দেখাবে (latest first)
 // 24hr old auto remove + max 10 items maintain
 // ─────────────────────────────────────────────
-export async function GET() {
+export async function GET(request) {
   try {
+    const admin = await requireAdmin(request);
+    if (!admin.success) return admin.response;
+
     const collection = await getBreakingNews();
 
     // TTL Index (24 hours পরে auto delete)
