@@ -3,6 +3,7 @@ import "./globals.css";
 import { ToastContainer } from "react-toastify";
 import Footer from "./(Fronted)/Componets/Shared/Footer";
 import Header from "./(Fronted)/Componets/Shared/Header";
+import AuthProvider from "./(Fronted)/Componets/Provider/AuthProvider";
 
 // Font
 const roboto = Roboto({
@@ -135,10 +136,12 @@ export default function RootLayout({ children }) {
       className={`${banglafont.variable} ${roboto.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <ToastContainer />
-        <Header/>
-        {children}
-        <Footer />
+        <AuthProvider>
+          <ToastContainer />
+          <Header />
+          {children}
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );
